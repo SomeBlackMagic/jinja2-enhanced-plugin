@@ -84,6 +84,74 @@
         Theme: <code id="currentTheme">unknown</code>
     </div>
 
+        <section class="version" data-version="2.1">
+        <h2>Version 2.1.0</h2>
+        <p><strong>Code Intelligence, Editor Productivity & Refactoring Foundations</strong></p>
+
+        <h3>🧠 Code Completion</h3>
+        <ul>
+            <li>New <code>Jinja2CompletionContributor</code> providing context-aware completions for tags, filters, tests, and variables</li>
+            <li>Smart completion context resolution via <code>Jinja2CompletionContextResolver</code> — correctly distinguishes <code>TAG_KEYWORD</code>, <code>FILTER</code>, <code>TEST</code>, <code>VARIABLE</code>, and <code>UNKNOWN</code> contexts</li>
+            <li>Nested variable member completions with support for both dot (<code>foo.bar</code>) and bracket (<code>foo["bar"]</code>) notation, including multi-level nesting</li>
+            <li>Built-in variable, filter, and test descriptors provided by <code>DefaultJinja2VariableProvider</code>, <code>DefaultJinja2FilterProvider</code>, and <code>DefaultJinja2TestProvider</code></li>
+            <li>Built-in global function descriptors via <code>DefaultJinja2FunctionProvider</code></li>
+            <li>New <code>variableProvider</code> extension point — third-party plugins can now contribute custom variable, filter, and test completions</li>
+            <li>Lookup items with type annotations and descriptions via <code>Jinja2LookupElementFactory</code></li>
+        </ul>
+
+        <h3>⌨️ Editor Typing Experience</h3>
+        <ul>
+            <li>New <code>Jinja2TypedHandler</code> — automatically inserts closing delimiters (<code>%}</code>, <code>}}</code>, <code>#}</code>) when typing their opening pairs</li>
+            <li>Smart handling of already-closed delimiters to avoid duplication</li>
+            <li>Correct behavior for unmatched or partial opening braces</li>
+        </ul>
+
+        <h3>🎨 Syntax & Rainbow Highlighting</h3>
+        <ul>
+            <li>Rainbow block delimiter highlighting via <code>Jinja2BlockRainbowAnnotator</code> and <code>Jinja2BracketsRainbowAnnotator</code></li>
+            <li>Expression-level rainbow highlighting via <code>Jinja2ExpressionsRainbowAnnotator</code></li>
+            <li>New rainbow level color keys (<code>RAINBOW_L0</code>–<code>RAINBOW_L4</code>) in <code>Jinja2SyntaxHighlighter</code>, configurable in the Color Settings page</li>
+            <li>Updated <em>Default</em> and <em>Darcula</em> color schemes with rainbow-level styling</li>
+            <li>New <code>Jinja2SemanticHighlightingAnnotator</code> for contextual semantic coloring</li>
+        </ul>
+
+        <h3>🧩 Code Navigation</h3>
+        <ul>
+            <li>New <code>Jinja2CodeBlockSupportHandler</code> enables code block navigation and marker highlighting for <code>{% for %}…{% endfor %}</code>, <code>{% if %}…{% endif %}</code>, and other paired constructs</li>
+            <li>Accurate range calculation for nested blocks and incomplete block pairs</li>
+        </ul>
+
+        <h3>✏️ Commenting</h3>
+        <ul>
+            <li>New <code>Jinja2Commenter</code> with full line and block comment support using Jinja2's <code>{# … #}</code> syntax</li>
+            <li>Toggle line/block comment works correctly with multi-line selections and nested constructs</li>
+        </ul>
+
+        <h3>🔤 Spellchecking</h3>
+        <ul>
+            <li>New <code>Jinja2SpellcheckingStrategy</code> integrates IDE spellchecking into Jinja2 template files</li>
+        </ul>
+
+        <h3>🗺️ Breadcrumbs</h3>
+        <ul>
+            <li>New <code>Jinja2BreadcrumbsProvider</code> adds breadcrumb navigation in the editor gutter for nested template structures</li>
+        </ul>
+
+        <h3>🎛️ Code Style & Formatting</h3>
+        <ul>
+            <li>Added <code>Jinja2ColorSettingsPage</code> for full syntax color customization</li>
+            <li>New <code>Jinja2FormattingModelBuilder</code>, <code>Jinja2LanguageCodeStyleSettingsProvider</code>, and <code>Jinja2CodeStyleSettingsProvider</code> for configurable code formatting</li>
+            <li>Improved block and macro body alignment in the formatter</li>
+        </ul>
+
+        <h3>🧪 Testing & Reliability</h3>
+        <ul>
+            <li>Extensive new test coverage for all v2.1 features: completion, context resolution, typed handler, rainbow annotators, code block handler, commenter, breadcrumbs, PSI helpers, and descriptors</li>
+            <li>New <code>Jinja2MacroDefinitionPsi#getParameterNames()</code> and <code>Jinja2SetStatementPsi#getAssignedVariableNames()</code> helper methods with full test coverage</li>
+            <li><code>Jinja2ElementFactory</code> added to simplify PSI element creation in tests and runtime code</li>
+        </ul>
+    </section>
+    
     <!-- ===================== -->
     <!-- VERSION 2.0 -->
     <!-- ===================== -->
