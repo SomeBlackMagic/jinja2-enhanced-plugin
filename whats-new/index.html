@@ -85,6 +85,37 @@
     </div>
 
         <section class="version" data-version="2.1">
+        <h2>Version 2.1.1</h2>
+        <p><strong>Parser Refinements, PSI Improvements & Internal Cleanup</strong></p>
+
+        <h3>Parser &amp; Lexer</h3>
+        <ul>
+            <li>Extended parser and lexer support for advanced Jinja2 constructs</li>
+            <li>Refactored context modifiers handling in parser and lexer for improved correctness</li>
+            <li>Added <code>PARENTHESIZED_EXPRESSION</code> PSI node support in <code>Jinja2ParserDefinition</code> with proper AST generation</li>
+            <li>Revised parsing rules for list, dictionary, and parenthesized expressions in <code>PrimaryExpressionParser</code></li>
+            <li>Improved tokenization of line statement and comment prefixes with configurable spacing and hash counts in <code>Jinja2Lexer.flex</code></li>
+            <li>Added <code>getLanguage</code> override in <code>Jinja2CodeStyleSettingsProvider</code> for correct language binding</li>
+        </ul>
+
+        <h3>Editor &amp; Formatting</h3>
+        <ul>
+            <li>Enhanced syntax highlight rules for Jinja2 constructs</li>
+            <li>Improved formatter behaviour with additional test coverage for edge cases</li>
+        </ul>
+
+        <h3>Testing &amp; Reliability</h3>
+        <ul>
+            <li>Added <code>LineSyntaxTest</code> for tokenization of line statements and comments</li>
+            <li>Added <code>Jinja2MacrosNegativeParserTest</code> for invalid macro syntax validation</li>
+            <li>Added raw block lexer tests covering edge cases (keyword prefix in identifiers, endraw suffix)</li>
+            <li>Added lexer and parser tests for compact collection literals with whitespace controls</li>
+            <li>Migrated raw block lexer tests to in-method snapshots for better maintainability</li>
+            <li>Restructured <code>tests/testData</code> into language-specific subfolders (<code>lang/parser</code>, <code>lang/lexer</code>, <code>lang/psi</code>)</li>
+            <li>Relocated macro negative test files to a dedicated <code>negative</code> folder</li>
+            <li>Removed outdated base test classes and legacy PSI test stubs</li>
+        </ul>
+
         <h2>Version 2.1.0</h2>
         <p><strong>Code Intelligence, Editor Productivity & Refactoring Foundations</strong></p>
 
@@ -150,7 +181,7 @@
             <li>New <code>Jinja2MacroDefinitionPsi#getParameterNames()</code> and <code>Jinja2SetStatementPsi#getAssignedVariableNames()</code> helper methods with full test coverage</li>
             <li><code>Jinja2ElementFactory</code> added to simplify PSI element creation in tests and runtime code</li>
         </ul>
-    </section>
+        </section>
     
     <!-- ===================== -->
     <!-- VERSION 2.0 -->
