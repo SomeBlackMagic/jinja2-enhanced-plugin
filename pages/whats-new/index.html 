@@ -1,0 +1,329 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Jinja2 Enhanced — What's New</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, sans-serif;
+            line-height: 1.6;
+            padding: 40px;
+            background: #ffffff;
+            color: #24292e;
+        }
+
+        body.dark {
+            background: #1e1e1e;
+            color: #cccccc;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            margin-bottom: 24px;
+        }
+
+        .version {
+            display: none;
+            margin-bottom: 32px;
+            padding: 24px;
+            border-radius: 8px;
+            background: #f6f8fa;
+            border: 1px solid #e1e4e8;
+        }
+
+        body.dark .version {
+            background: #2d2d2d;
+            border-color: #444;
+        }
+
+        .version h2 {
+            margin-bottom: 12px;
+        }
+
+        ul {
+            padding-left: 20px;
+        }
+
+        .meta {
+            margin-bottom: 24px;
+            font-size: 0.9em;
+            opacity: 0.7;
+        }
+
+        code {
+            background: rgba(0,0,0,0.05);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        body.dark code {
+            background: rgba(255,255,255,0.1);
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+    <h1>Jinja2 Enhanced — What’s New</h1>
+
+    <div class="meta">
+        Version: <code id="currentVersion">unknown</code> ·
+        Theme: <code id="currentTheme">unknown</code>
+    </div>
+
+        <section class="version" data-version="2.1">
+        <h2>Version 2.1.1</h2>
+        <p><strong>Parser Refinements, PSI Improvements & Internal Cleanup</strong></p>
+
+        <h3>Parser &amp; Lexer</h3>
+        <ul>
+            <li>Extended parser and lexer support for advanced Jinja2 constructs</li>
+            <li>Refactored context modifiers handling in parser and lexer for improved correctness</li>
+            <li>Added <code>PARENTHESIZED_EXPRESSION</code> PSI node support in <code>Jinja2ParserDefinition</code> with proper AST generation</li>
+            <li>Revised parsing rules for list, dictionary, and parenthesized expressions in <code>PrimaryExpressionParser</code></li>
+            <li>Improved tokenization of line statement and comment prefixes with configurable spacing and hash counts in <code>Jinja2Lexer.flex</code></li>
+            <li>Added <code>getLanguage</code> override in <code>Jinja2CodeStyleSettingsProvider</code> for correct language binding</li>
+        </ul>
+
+        <h3>Editor &amp; Formatting</h3>
+        <ul>
+            <li>Enhanced syntax highlight rules for Jinja2 constructs</li>
+            <li>Improved formatter behaviour with additional test coverage for edge cases</li>
+        </ul>
+
+        <h3>Testing &amp; Reliability</h3>
+        <ul>
+            <li>Added <code>LineSyntaxTest</code> for tokenization of line statements and comments</li>
+            <li>Added <code>Jinja2MacrosNegativeParserTest</code> for invalid macro syntax validation</li>
+            <li>Added raw block lexer tests covering edge cases (keyword prefix in identifiers, endraw suffix)</li>
+            <li>Added lexer and parser tests for compact collection literals with whitespace controls</li>
+            <li>Migrated raw block lexer tests to in-method snapshots for better maintainability</li>
+            <li>Restructured <code>tests/testData</code> into language-specific subfolders (<code>lang/parser</code>, <code>lang/lexer</code>, <code>lang/psi</code>)</li>
+            <li>Relocated macro negative test files to a dedicated <code>negative</code> folder</li>
+            <li>Removed outdated base test classes and legacy PSI test stubs</li>
+        </ul>
+
+        <h2>Version 2.1.0</h2>
+        <p><strong>Code Intelligence, Editor Productivity & Refactoring Foundations</strong></p>
+
+        <h3>🧠 Code Completion</h3>
+        <ul>
+            <li>New <code>Jinja2CompletionContributor</code> providing context-aware completions for tags, filters, tests, and variables</li>
+            <li>Smart completion context resolution via <code>Jinja2CompletionContextResolver</code> — correctly distinguishes <code>TAG_KEYWORD</code>, <code>FILTER</code>, <code>TEST</code>, <code>VARIABLE</code>, and <code>UNKNOWN</code> contexts</li>
+            <li>Nested variable member completions with support for both dot (<code>foo.bar</code>) and bracket (<code>foo["bar"]</code>) notation, including multi-level nesting</li>
+            <li>Built-in variable, filter, and test descriptors provided by <code>DefaultJinja2VariableProvider</code>, <code>DefaultJinja2FilterProvider</code>, and <code>DefaultJinja2TestProvider</code></li>
+            <li>Built-in global function descriptors via <code>DefaultJinja2FunctionProvider</code></li>
+            <li>New <code>variableProvider</code> extension point — third-party plugins can now contribute custom variable, filter, and test completions</li>
+            <li>Lookup items with type annotations and descriptions via <code>Jinja2LookupElementFactory</code></li>
+        </ul>
+
+        <h3>⌨️ Editor Typing Experience</h3>
+        <ul>
+            <li>New <code>Jinja2TypedHandler</code> — automatically inserts closing delimiters (<code>%}</code>, <code>}}</code>, <code>#}</code>) when typing their opening pairs</li>
+            <li>Smart handling of already-closed delimiters to avoid duplication</li>
+            <li>Correct behavior for unmatched or partial opening braces</li>
+        </ul>
+
+        <h3>🎨 Syntax & Rainbow Highlighting</h3>
+        <ul>
+            <li>Rainbow block delimiter highlighting via <code>Jinja2BlockRainbowAnnotator</code> and <code>Jinja2BracketsRainbowAnnotator</code></li>
+            <li>Expression-level rainbow highlighting via <code>Jinja2ExpressionsRainbowAnnotator</code></li>
+            <li>New rainbow level color keys (<code>RAINBOW_L0</code>–<code>RAINBOW_L4</code>) in <code>Jinja2SyntaxHighlighter</code>, configurable in the Color Settings page</li>
+            <li>Updated <em>Default</em> and <em>Darcula</em> color schemes with rainbow-level styling</li>
+            <li>New <code>Jinja2SemanticHighlightingAnnotator</code> for contextual semantic coloring</li>
+        </ul>
+
+        <h3>🧩 Code Navigation</h3>
+        <ul>
+            <li>New <code>Jinja2CodeBlockSupportHandler</code> enables code block navigation and marker highlighting for <code>{% for %}…{% endfor %}</code>, <code>{% if %}…{% endif %}</code>, and other paired constructs</li>
+            <li>Accurate range calculation for nested blocks and incomplete block pairs</li>
+        </ul>
+
+        <h3>✏️ Commenting</h3>
+        <ul>
+            <li>New <code>Jinja2Commenter</code> with full line and block comment support using Jinja2's <code>{# … #}</code> syntax</li>
+            <li>Toggle line/block comment works correctly with multi-line selections and nested constructs</li>
+        </ul>
+
+        <h3>🔤 Spellchecking</h3>
+        <ul>
+            <li>New <code>Jinja2SpellcheckingStrategy</code> integrates IDE spellchecking into Jinja2 template files</li>
+        </ul>
+
+        <h3>🗺️ Breadcrumbs</h3>
+        <ul>
+            <li>New <code>Jinja2BreadcrumbsProvider</code> adds breadcrumb navigation in the editor gutter for nested template structures</li>
+        </ul>
+
+        <h3>🎛️ Code Style & Formatting</h3>
+        <ul>
+            <li>Added <code>Jinja2ColorSettingsPage</code> for full syntax color customization</li>
+            <li>New <code>Jinja2FormattingModelBuilder</code>, <code>Jinja2LanguageCodeStyleSettingsProvider</code>, and <code>Jinja2CodeStyleSettingsProvider</code> for configurable code formatting</li>
+            <li>Improved block and macro body alignment in the formatter</li>
+        </ul>
+
+        <h3>🧪 Testing & Reliability</h3>
+        <ul>
+            <li>Extensive new test coverage for all v2.1 features: completion, context resolution, typed handler, rainbow annotators, code block handler, commenter, breadcrumbs, PSI helpers, and descriptors</li>
+            <li>New <code>Jinja2MacroDefinitionPsi#getParameterNames()</code> and <code>Jinja2SetStatementPsi#getAssignedVariableNames()</code> helper methods with full test coverage</li>
+            <li><code>Jinja2ElementFactory</code> added to simplify PSI element creation in tests and runtime code</li>
+        </ul>
+        </section>
+
+    <!-- ===================== -->
+    <!-- VERSION 2.0 -->
+    <!-- ===================== -->
+    <section class="version" data-version="2.0">
+        <h2>Version 2.0.0-rc1</h2>
+        <p><strong>Complete Plugin Rewrite — Enhanced Parsing & Editor Features</strong></p>
+
+        <h3>🎯 Core Parser Improvements</h3>
+        <ul>
+            <li>Completely redesigned parser architecture with hand-written custom parser for better accuracy and maintainability</li>
+            <li>Modular expression and statement parsing with specialized parsers for each construct</li>
+            <li>Enhanced support for all Jinja2 operators including <code>is</code> tests, power operator, comparison chains</li>
+            <li>Improved handling of inline-if (ternary) expressions and complex filter chains</li>
+            <li>Support for <code>if</code> conditions in <code>for</code> loops</li>
+            <li>Better parsing of macros with keyword arguments, defaults, varargs, and kwargs</li>
+            <li>Enhanced import/from statement parsing with proper alias handling</li>
+            <li>Nested raw block support with depth tracking</li>
+        </ul>
+
+        <h3>🎨 Editor & UI Enhancements</h3>
+        <ul>
+            <li>Rainbow bracket highlighting for better code readability with separate annotators for blocks and brackets</li>
+            <li>Improved semantic highlighting with contextual syntax coloring</li>
+            <li>Enhanced brace matching support for Jinja2 delimiters</li>
+            <li>Improved code formatting with spacing builder and customizable code style settings</li>
+            <li>Built-in documentation viewer with embedded tool window and editor tabs</li>
+        </ul>
+
+        <h3>🔍 Code Quality & Inspections</h3>
+        <ul>
+            <li>New template inspections for detecting common errors and issues</li>
+            <li>Better error reporting with intelligent filtering</li>
+            <li>Enhanced PSI structure for more reliable code analysis</li>
+        </ul>
+
+        <h3>🧪 Testing & Reliability</h3>
+        <ul>
+            <li>Comprehensive lexer test coverage (100+ test cases) for all token types and edge cases</li>
+            <li>Extensive parser test suite covering all Jinja2 constructs and syntax variations</li>
+            <li>Tests for complex nested structures, whitespace handling, and error conditions</li>
+            <li>Improved stability and reduced false positives</li>
+        </ul>
+
+        <h3>📚 Documentation</h3>
+        <ul>
+            <li>Comprehensive Jinja2 syntax analysis documentation</li>
+            <li>Technical specification and architecture guides</li>
+            <li>In-IDE documentation access for quick reference</li>
+        </ul>
+
+        <h3>⚡ Performance & Infrastructure</h3>
+        <ul>
+            <li>Optimized PSI utilities and file view provider</li>
+            <li>Streamlined error handling without external dependencies</li>
+            <li>Better handling of unterminated blocks and malformed templates</li>
+            <li>Support for whitespace trim modifiers (<code>-</code>, <code>+</code>) throughout</li>
+        </ul>
+
+        <p><em>Note: This is a major rewrite focused on establishing a solid foundation. Some features from 1.x may be reimplemented differently or scheduled for future releases.</em></p>
+    </section>
+    <!-- ===================== -->
+    <!-- VERSION 1.1 -->
+    <!-- ===================== -->
+    <section class="version" data-version="1.1">
+        <h2>Version .1</h2>
+        <ul>
+            <li>Initial “What’s New” page</li>
+            <li>Automatic IDE color scheme detection</li>
+            <li>Improved PSI stability</li>
+        </ul>
+    </section>
+
+    <!-- ===================== -->
+    <!-- VERSION 1.2 -->
+    <!-- ===================== -->
+    <section class="version" data-version="1.2">
+        <h2>Version 1.2</h2>
+        <ul>
+            <li>New inspections</li>
+            <li>Formatter fixes</li>
+            <li>Performance improvements</li>
+        </ul>
+    </section>
+
+    <!-- ===================== -->
+    <!-- FALLBACK -->
+    <!-- ===================== -->
+    <section class="version" data-version="latest">
+        <h2>Latest</h2>
+        <p>This page shows the latest available changes.</p>
+    </section>
+</div>
+
+<script>
+    (function () {
+
+        let version = 'latest';
+        let colorScheme = 'light';
+
+        if (location.hash) {
+            const hash = location.hash.substring(1); // without #
+            const [hashVersion, hashQuery] = hash.split('?');
+
+            if (hashVersion) {
+                version = hashVersion;
+            }
+
+            if (hashQuery) {
+                const hashParams = new URLSearchParams(hashQuery);
+                colorScheme = hashParams.get('colorScheme') || colorScheme;
+            }
+        }
+
+        // normal query (если URL исправят)
+        const searchParams = new URLSearchParams(location.search);
+        colorScheme = searchParams.get('colorScheme') || colorScheme;
+
+        // apply theme
+        if (colorScheme === 'dark') {
+            document.body.classList.add('dark');
+        }
+
+        // show version
+        const blocks = document.querySelectorAll('.version');
+        let shown = false;
+
+        blocks.forEach(block => {
+            if (block.dataset.version === version) {
+                block.style.display = 'block';
+                shown = true;
+                block.scrollIntoView({ block: 'start' });
+            }
+        });
+
+        if (!shown) {
+            document.querySelector('[data-version="latest"]').style.display = 'block';
+        }
+
+        document.getElementById('currentVersion').textContent = version;
+        document.getElementById('currentTheme').textContent = colorScheme;
+    })();
+</script>
+</body>
+</html>
