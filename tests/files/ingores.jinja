@@ -1,0 +1,140 @@
+{# ============================================================
+   SYNTAX / BLOCK STRUCTURE
+   ============================================================ #}
+
+{# jinja:ignore syntax-error #}
+{% if foo %}
+{{ foo }}
+
+{# jinja:ignore block-nesting #}
+{% if a %}{% for i in x %}{% endif %}{% endfor %}
+
+{# jinja:ignore block-unclosed #}
+{% block content %}
+{{ value }}
+
+{# jinja:ignore block-mismatch #}
+{% endraw %}
+
+
+{# ============================================================
+   EXPRESSIONS / GRAMMAR
+   ============================================================ #}
+
+{# jinja:ignore invalid-expression #}
+{{ 1 + * 2 }}
+
+
+{# jinja:ignore unterminated-string #}
+{{ "unterminated }}
+
+
+{# ============================================================
+   CONTROL FLOW
+   ============================================================ #}
+
+{# jinja:ignore unsupported-tag #}
+{% for i in items %}
+  {% break %}
+{% endfor %}
+
+
+{# ============================================================
+   MACROS
+   ============================================================ #}
+
+{# jinja:ignore invalid-macro-usage #}
+{{ caller() }}
+
+{# jinja:ignore invalid-macro-scope #}
+{% if condition %}
+  {% macro bad() %}x{% endmacro %}
+{% endif %}
+
+
+{# ============================================================
+   INHERITANCE
+   ============================================================ #}
+
+{# jinja:ignore invalid-inheritance #}
+Hello
+{% extends "base.jinja" %}
+
+
+{# ============================================================
+   RUNTIME — UNDEFINED
+   ============================================================ #}
+
+{# jinja:ignore undefined-variable #}
+{{ missing_var }}
+
+{# jinja:ignore undefined-attribute #}
+{{ obj.missing_attr }}
+
+{# jinja:ignore undefined-variable, undefined-attribute #}
+{{ totally_missing.attr }}
+
+
+{# ============================================================
+   RUNTIME — TYPE ERRORS
+   ============================================================ #}
+
+{# jinja:ignore type-error #}
+{% for i in 5 %}
+  {{ i }}
+{% endfor %}
+
+
+{# ============================================================
+   FILTERS
+   ============================================================ #}
+
+{# jinja:ignore unknown-filter #}
+{{ foo | does_not_exist }}
+
+{# jinja:ignore invalid-filter-args #}
+{{ foo | replace("a") }}
+
+
+{# ============================================================
+   TESTS
+   ============================================================ #}
+
+{# jinja:ignore unknown-test #}
+{{ foo is imaginary }}
+
+{# jinja:ignore invalid-test-usage #}
+{{ foo | odd }}
+
+
+{# ============================================================
+   I18N
+   ============================================================ #}
+
+{# jinja:ignore invalid-i18n-usage #}
+{% pluralize %}
+
+
+{# ============================================================
+   BLOCK-SCOPED IGNORE
+   ============================================================ #}
+
+{# jinja:ignore-start type-error #}
+{% for i in 10 %}
+  {{ i }}
+{% endfor %}
+{# jinja:ignore-end #}
+
+
+{# ============================================================
+   INVALID IGNORE DIRECTIVES (MUST ERROR)
+   ============================================================ #}
+
+{# jinja:ignore #}
+{{ missing }}
+
+{# jinja:ignore all #}
+{{ foo }}
+
+{# jinja:ignore unknown-rule #}
+{{ bar }}

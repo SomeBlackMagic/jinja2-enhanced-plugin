@@ -1,0 +1,6 @@
+{# Example 3.1: Basic pluralization (implicit variable) #}
+{% trans count=items|length %}
+  There is {{ count }} item.
+{% pluralize %}
+  There are {{ count }} items.
+{% endtrans %}

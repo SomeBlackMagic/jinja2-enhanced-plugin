@@ -1,0 +1,116 @@
+{# ===================================================== #}
+{# NEGATIVE TEST CASES FOR `is` — PARSER LEVEL ONLY      #}
+{# ===================================================== #}
+
+{# --- 1. `is` without test name ----------------------- #}
+
+{% if x is %}{% endif %}
+{# EXPECTED PARSER ERROR: expected test name after 'is' #}
+
+{% if x is not %}{% endif %}
+{# EXPECTED PARSER ERROR: expected test name after 'is not' #}
+
+
+{# --- 2. Missing left-hand expression ----------------- #}
+
+{% if is defined %}{% endif %}
+{# EXPECTED PARSER ERROR: expected expression before 'is' #}
+
+{% if is even %}{% endif %}
+{# EXPECTED PARSER ERROR: expected expression before 'is' #}
+
+{% if is %}{% endif %}
+{# EXPECTED PARSER ERROR: expected expression before 'is' #}
+
+
+{# --- 3. `is` in invalid position --------------------- #}
+
+{% is defined %}
+{# EXPECTED PARSER ERROR: unexpected 'is' in statement context #}
+
+{{ is defined }}
+{# EXPECTED PARSER ERROR: expected expression before 'is' #}
+
+
+{# --- 4. Multiple `is` without operator --------------- #}
+
+{% if x is defined is string %}{% endif %}
+{# EXPECTED PARSER ERROR: unexpected 'is', logical operator expected #}
+
+{% if x is even odd %}{% endif %}
+{# EXPECTED PARSER ERROR: unexpected identifier 'odd' #}
+
+
+{# --- 5. `not` without `is` --------------------------- #}
+
+{% if x not defined %}{% endif %}
+{# EXPECTED PARSER ERROR: unexpected 'not', 'is' expected #}
+
+{% if not defined %}{% endif %}
+{# EXPECTED PARSER ERROR: expected expression before 'not' #}
+
+
+{# --- 6. Invalid test arguments syntax ---------------- #}
+
+{% if 9 is divisibleby() %}{% endif %}
+{# EXPECTED PARSER ERROR: expected argument inside parentheses #}
+
+{% if 9 is divisibleby( %}{% endif %}
+{# EXPECTED PARSER ERROR: unclosed '(' in test arguments #}
+
+{% if 9 is divisibleby %}{% endif %}
+{# EXPECTED PARSER ERROR: expected argument after test name #}
+
+
+{# --- 7. Extra / unmatched parentheses ---------------- #}
+
+{% if 9 is divisibleby 3) %}{% endif %}
+{# EXPECTED PARSER ERROR: unexpected ')' #}
+
+{% if x is sameas(y)) %}{% endif %}
+{# EXPECTED PARSER ERROR: unexpected ')' #}
+
+
+{# --- 8. Missing required argument -------------------- #}
+
+{% if x is sameas %}{% endif %}
+{# EXPECTED PARSER ERROR: expected argument for test 'sameas' #}
+
+
+{# --- 9. Invalid token instead of test name ----------- #}
+
+{% if x is 123 %}{% endif %}
+{# EXPECTED PARSER ERROR: test name must be identifier #}
+
+{% if x is "defined" %}{% endif %}
+{# EXPECTED PARSER ERROR: test name must be identifier #}
+
+{% if x is (defined) %}{% endif %}
+{# EXPECTED PARSER ERROR: unexpected '(' after 'is' #}
+
+
+{# --- 10. Invalid `is not` continuation --------------- #}
+
+{% if x is not %}{% endif %}
+{# EXPECTED PARSER ERROR: expected test name after 'is not' #}
+
+{% if x is not (defined) %}{% endif %}
+{# EXPECTED PARSER ERROR: unexpected '(' after 'is not' #}
+
+
+{# --- 11. Invalid logical operator placement ---------- #}
+
+{% if x is and defined %}{% endif %}
+{# EXPECTED PARSER ERROR: expected test name, got logical operator #}
+
+{% if x is or defined %}{% endif %}
+{# EXPECTED PARSER ERROR: expected test name, got logical operator #}
+
+
+{# --- 12. Expression abruptly terminated -------------- #}
+
+{% if x is defined and %}{% endif %}
+{# EXPECTED PARSER ERROR: expected expression after 'and' #}
+
+{% if x is defined or %}{% endif %}
+{# EXPECTED PARSER ERROR: expected expression after 'or' #}

@@ -1,0 +1,8 @@
+{# Pattern 2: Use trimmed for multi-line readability #}
+{# GOOD #}
+{% trans trimmed user=user.name %}
+  Hello {{ user }},
+  welcome back!
+{% endtrans %}
+{# LESS READABLE #}
+{% trans user=user.name %}Hello {{ user }}, welcome back!{% endtrans %}

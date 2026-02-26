@@ -1,0 +1,16 @@
+{# Manual checks for module alias imports. #}
+{# 1) Put caret after "forms." and invoke completion (Ctrl+Space). #}
+{# 2) Ctrl+Click on "input", "button", "theme", "api_host", "api_port". #}
+{% import "docs/examples/import-resolution/shared_symbols.jinja2" as forms %}
+
+<section class="demo">
+  {{ forms.input("email", type="email") }}
+  {{ forms.button("Save", kind="success") }}
+
+  <p>Theme: {{ forms.theme }}</p>
+  <p>Endpoint: {{ forms.api_host }}:{{ forms.api_port }}</p>
+
+  {# Negative checks: should not resolve/suggest exported nested macro-local variables. #}
+  {{ forms.hidden_in_macro }}
+  {{ forms.unknown_symbol }}
+</section>

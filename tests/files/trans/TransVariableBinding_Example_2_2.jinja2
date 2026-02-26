@@ -1,0 +1,4 @@
+{# Example 2.2: Multiple variable bindings #}
+{% trans book_title=book.title, author_name=author.name %}
+  This is {{ book_title }} by {{ author_name }}
+{% endtrans %}

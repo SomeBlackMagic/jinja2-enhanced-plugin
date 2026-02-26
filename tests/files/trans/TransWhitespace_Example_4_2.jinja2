@@ -1,0 +1,6 @@
+{# Example 4.2: Trimmed with variables #}
+{% trans trimmed user_name=user.display_name %}
+  Welcome back,
+  {{ user_name }}!
+  We're glad to see you.
+{% endtrans %}

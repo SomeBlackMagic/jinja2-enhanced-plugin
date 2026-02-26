@@ -1,0 +1,19 @@
+{# Example 12.2: Shopping cart #}
+<div class="cart">
+  <h2>{% trans "shopping_cart" %}Your Cart{% endtrans %}</h2>
+
+  {% if cart_items %}
+    {% trans trimmed count=cart_items|length, total=cart_total|currency %}
+      Your cart contains {{ count }} item.
+      Total: {{ total }}
+    {% pluralize %}
+      Your cart contains {{ count }} items.
+      Total: {{ total }}
+    {% endtrans %}
+
+    <button>{{ pgettext('cart_action', 'Checkout') }}</button>
+    <button>{{ pgettext('cart_action', 'Clear') }}</button>
+  {% else %}
+    <p>{% trans %}Your cart is empty.{% endtrans %}</p>
+  {% endif %}
+</div>

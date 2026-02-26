@@ -1,0 +1,2 @@
+{# Example 9.4: Complex count expression #}
+{{ npgettext('notification', '1 unread message', '%d unread messages', messages|selectattr('unread')|list|length) }}

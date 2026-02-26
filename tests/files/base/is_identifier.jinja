@@ -1,0 +1,103 @@
+{# ============================= #}
+{# Existence / special values    #}
+{# ============================= #}
+
+{% if t_defined is defined %}TEST:defined{% endif %}
+{% if t_undef is undefined %}TEST:undefined{% endif %}
+{% if none is none %}TEST:none{% endif %}
+{% if t_defined is not undefined %}TEST:not-undefined{% endif %}
+{% if t_undef is not defined %}TEST:not-defined{% endif %}
+
+{# ============================= #}
+{# Boolean                       #}
+{# ============================= #}
+
+{% if true is true %}TEST:true{% endif %}
+{% if false is false %}TEST:false{% endif %}
+{% if t_bool is boolean %}TEST:boolean{% endif %}
+{% if t_bool is not boolean %}TEST:not-boolean{% endif %}
+
+{# ============================= #}
+{# Types                         #}
+{# ============================= #}
+
+{% if t_str is string %}TEST:string{% endif %}
+{% if t_int is integer %}TEST:integer{% endif %}
+{% if t_float is float %}TEST:float{% endif %}
+{% if t_int is number %}TEST:number{% endif %}
+
+{% if t_map is mapping %}TEST:mapping{% endif %}
+{% if t_seq is sequence %}TEST:sequence{% endif %}
+{% if t_seq is iterable %}TEST:iterable{% endif %}
+{% if range is callable %}TEST:callable{% endif %}
+
+{# ============================= #}
+{# Numeric properties            #}
+{# ============================= #}
+
+{% if 2 is even %}TEST:even{% endif %}
+{% if 3 is odd %}TEST:odd{% endif %}
+{% if 9 is divisibleby 3 %}TEST:divisibleby{% endif %}
+{% if 10 is not divisibleby 3 %}TEST:not-divisibleby{% endif %}
+
+{# ============================= #}
+{# String properties             #}
+{# ============================= #}
+
+{% if "abc" is lower %}TEST:lower{% endif %}
+{% if "ABC" is upper %}TEST:upper{% endif %}
+{% if "AbC" is not lower %}TEST:not-lower{% endif %}
+{% if "AbC" is not upper %}TEST:not-upper{% endif %}
+
+{# ============================= #}
+{# Comparison tests (operator)   #}
+{# ============================= #}
+
+{% if 2 is eq 2 %}TEST:eq{% endif %}
+{% if 2 is ne 1 %}TEST:ne{% endif %}
+{% if 1 is lt 2 %}TEST:lt{% endif %}
+{% if 1 is le 1 %}TEST:le{% endif %}
+{% if 2 is gt 1 %}TEST:gt{% endif %}
+{% if 2 is ge 2 %}TEST:ge{% endif %}
+
+{% if 1 is not eq 2 %}TEST:not-eq{% endif %}
+{% if 2 is not lt 1 %}TEST:not-lt{% endif %}
+
+{# ============================= #}
+{# Identity                      #}
+{# ============================= #}
+
+{% if t_int is sameas(t_int) %}TEST:sameas{% endif %}
+{% if none is sameas none %}TEST:sameas-none{% endif %}
+{% if true is sameas true %}TEST:sameas-true{% endif %}
+{% if false is sameas false %}TEST:sameas-false{% endif %}
+{% if t_int is not sameas(1) %}TEST:not-sameas{% endif %}
+
+{# ============================= #}
+{# Membership                    #}
+{# ============================= #}
+
+{% if "a" is in ["a", "b"] %}TEST:in{% endif %}
+{% if "c" is not in ["a", "b"] %}TEST:not-in{% endif %}
+
+{# ============================= #}
+{# Meta-tests                    #}
+{# ============================= #}
+
+{% if "upper" is filter %}TEST:filter-exists{% endif %}
+{% if "defined" is test %}TEST:test-exists{% endif %}
+
+{# ============================= #}
+{# Escaping                      #}
+{# ============================= #}
+
+{% if esc_html is escaped %}TEST:escaped{% endif %}
+{% if raw_html is not escaped %}TEST:not-escaped{% endif %}
+
+{# ============================= #}
+{# Unknown test (parser MUST     #}
+{# accept, inspection handles)   #}
+{# ============================= #}
+
+{% if "ABC" is qweqwe %}TEST:unknown-test{% endif %}
+{% if t_int is not qweqwe(123) %}TEST:not-unknown-test{% endif %}

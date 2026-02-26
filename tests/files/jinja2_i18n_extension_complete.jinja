@@ -1,0 +1,671 @@
+{# ==============================================================================
+   JINJA2 I18N EXTENSION - COMPLETE VALID SYNTAX CORPUS
+   Extension: jinja2.ext.i18n
+   
+   This file demonstrates ALL valid syntax patterns for the i18n extension
+   in Jinja2 3.1.x, covering:
+   
+   1. TRANS TAG VARIANTS
+      - Basic trans blocks
+      - Trans with variable binding
+      - Trans with pluralization
+      - Trans with trimmed/notrimmed whitespace control
+      - Trans with context (pgettext/npgettext) - added in Jinja 3.1
+      - Combined: context + trimmed + pluralize
+   
+   2. GETTEXT FUNCTIONS (Expression-based translation)
+      - _() - alias for gettext()
+      - gettext() - basic translation
+      - ngettext() - pluralization in expressions
+      - pgettext() - context-aware translation (added in Jinja 3.0)
+      - npgettext() - context + pluralization (added in Jinja 3.0)
+   
+   3. NEWSTYLE vs STANDARD GETTEXT
+      - Standard gettext (requires |format filter)
+      - Newstyle gettext (formatting built-in) - recommended in Jinja 2.5+
+   
+   Prerequisites:
+   - Environment must have i18n extension enabled:
+     env = Environment(extensions=['jinja2.ext.i18n'])
+   - Translation functions must be installed via one of:
+     * env.install_gettext_translations(translations)
+     * env.install_gettext_callables(gettext_func, ngettext_func, ...)
+     * env.install_null_translations() for testing
+   
+   References:
+   - https://jinja.palletsprojects.com/en/stable/extensions/#i18n
+   - https://jinja.palletsprojects.com/en/stable/templates/#i18n
+============================================================================== #}
+
+{# ==============================================================================
+   SECTION 1: BASIC TRANS TAG
+   Syntax: {% trans %}text{% endtrans %}
+   
+   Marks a static string for translation. No variables or statements allowed
+   inside the block, only plain text.
+============================================================================== #}
+
+{# Example 1.1: Simple static string #}
+<h1>{% trans %}Welcome to our website{% endtrans %}</h1>
+
+{# Example 1.2: Multi-line static string #}
+<p>
+  {% trans %}
+    This is a longer paragraph that spans
+    multiple lines and will be translated
+    as a single unit.
+  {% endtrans %}
+</p>
+
+{# Example 1.3: Trans in various contexts #}
+<button>{% trans %}Submit{% endtrans %}</button>
+<span class="error">{% trans %}Invalid input{% endtrans %}</span>
+{% trans %}Copyright 2024{% endtrans %}
+
+
+{# ==============================================================================
+   SECTION 2: TRANS WITH VARIABLE BINDING
+   Syntax: {% trans var1=expr1, var2=expr2 %}text with {{ var1 }}{% endtrans %}
+   
+   Binds template expressions to names for use within the translation block.
+   Inside trans blocks, only variable tags {{ }} are allowed, no statements.
+============================================================================== #}
+
+{# Example 2.1: Single variable binding #}
+{% trans username=user.name %}
+  Hello {{ username }}!
+{% endtrans %}
+
+{# Example 2.2: Multiple variable bindings #}
+{% trans book_title=book.title, author_name=author.name %}
+  This is {{ book_title }} by {{ author_name }}
+{% endtrans %}
+
+{# Example 2.3: Variable with filter in binding #}
+{% trans item_count=items|length %}
+  You have {{ item_count }} items in your cart
+{% endtrans %}
+
+{# Example 2.4: Complex expression binding #}
+{% trans total_price=(items|sum(attribute='price'))|round(2) %}
+  Total: ${{ total_price }}
+{% endtrans %}
+
+{# Example 2.5: Multiple variables with multiple uses #}
+{% trans first=user.first_name, last=user.last_name %}
+  User: {{ first }} {{ last }} ({{ first }}.{{ last }}@example.com)
+{% endtrans %}
+
+
+{# ==============================================================================
+   SECTION 3: PLURALIZATION WITH TRANS
+   Syntax: {% trans count=expr %}singular{% pluralize %}plural{% endtrans %}
+   
+   Handles singular/plural forms. By default, first variable determines form.
+   Can explicitly specify pluralization variable.
+============================================================================== #}
+
+{# Example 3.1: Basic pluralization (implicit variable) #}
+{% trans count=items|length %}
+  There is {{ count }} item.
+{% pluralize %}
+  There are {{ count }} items.
+{% endtrans %}
+
+{# Example 3.2: Explicit pluralization variable #}
+{% trans user_count=users|length, item_count=items|length %}
+  {{ user_count }} user has {{ item_count }} item.
+{% pluralize user_count %}
+  {{ user_count }} users have {{ item_count }} items.
+{% endtrans %}
+
+{# Example 3.3: Pluralization with named variable #}
+{% trans num_apples=basket.apple_count %}
+  {{ num_apples }} apple
+{% pluralize %}
+  {{ num_apples }} apples
+{% endtrans %}
+
+{# Example 3.4: Zero/singular/plural handling (depends on translation catalog) #}
+{% trans n=notification_count %}
+  You have {{ n }} new notification
+{% pluralize %}
+  You have {{ n }} new notifications
+{% endtrans %}
+
+{# Example 3.5: Pluralization with multiple variables #}
+{% trans count=messages|length, user=current_user.name %}
+  {{ user }}, you have {{ count }} message.
+{% pluralize %}
+  {{ user }}, you have {{ count }} messages.
+{% endtrans %}
+
+
+{# ==============================================================================
+   SECTION 4: WHITESPACE CONTROL IN TRANS
+   Syntax: {% trans trimmed %}...{% endtrans %}
+          {% trans notrimmed %}...{% endtrans %}
+   
+   Controls whitespace handling in translation strings.
+   - trimmed: removes leading/trailing whitespace and normalizes internal spaces
+   - notrimmed: preserves exact whitespace (default behavior)
+============================================================================== #}
+
+{# Example 4.1: Trimmed whitespace (recommended for readability) #}
+{% trans trimmed %}
+  This text will have its
+  leading and trailing whitespace
+  removed, and line breaks normalized.
+{% endtrans %}
+
+{# Example 4.2: Trimmed with variables #}
+{% trans trimmed user_name=user.display_name %}
+  Welcome back,
+  {{ user_name }}!
+  We're glad to see you.
+{% endtrans %}
+
+{# Example 4.3: Not trimmed (explicit preservation) #}
+{% trans notrimmed %}
+Line1
+    Line2 with indent
+Line3
+{% endtrans %}
+
+{# Example 4.4: Trimmed with pluralization #}
+{% trans trimmed count=items|length %}
+  You have selected
+  {{ count }} item
+  for processing.
+{% pluralize %}
+  You have selected
+  {{ count }} items
+  for processing.
+{% endtrans %}
+
+
+{# ==============================================================================
+   SECTION 5: CONTEXT-AWARE TRANSLATION (PGETTEXT/NPGETTEXT)
+   Syntax: {% trans "context" %}text{% endtrans %}
+          {% trans "context" var=expr %}text{% endtrans %}
+          {% trans "context" count=expr %}singular{% pluralize %}plural{% endtrans %}
+   
+   Added in Jinja 3.1 (pgettext/npgettext support added in Jinja 3.0)
+   Provides translation context to disambiguate identical strings with different meanings.
+   Context is passed as the first token (string literal) after trans keyword.
+============================================================================== #}
+
+{# Example 5.1: Basic context #}
+{# "Open" as verb (open file) vs noun (tournament is open) #}
+<button>{% trans "verb" %}Open{% endtrans %}</button>
+<status>{% trans "status" %}Open{% endtrans %}</status>
+
+{# Example 5.2: Context disambiguates meaning #}
+{# "Bank" as financial institution vs river bank #}
+<p>{% trans "financial" %}Bank{% endtrans %}</p>
+<p>{% trans "geography" %}Bank{% endtrans %}</p>
+
+{# Example 5.3: Context with variable binding #}
+{% trans "greeting" name=visitor.name %}
+  Hello {{ name }}
+{% endtrans %}
+
+{# Example 5.4: Context with pluralization #}
+{% trans "fruit" count=apple_count %}
+  {{ count }} apple
+{% pluralize %}
+  {{ count }} apples
+{% endtrans %}
+
+{# Example 5.5: Context + trimmed + pluralization (full combo) #}
+{% trans "shopping_cart" trimmed count=cart_items|length %}
+  You have
+  {{ count }} item
+  in your cart.
+{% pluralize %}
+  You have
+  {{ count }} items
+  in your cart.
+{% endtrans %}
+
+{# Example 5.6: Different contexts for same word #}
+{% trans "music" %}Record{% endtrans %}       {# noun: music album #}
+{% trans "action" %}Record{% endtrans %}      {# verb: to record #}
+{% trans "achievement" %}Record{% endtrans %} {# noun: best performance #}
+
+
+{# ==============================================================================
+   SECTION 6: GETTEXT FUNCTION - BASIC TRANSLATION
+   Syntax: {{ gettext('string') }}
+          {{ _('string') }}  {# _ is alias for gettext #}
+   
+   Used for translating strings in expressions where trans tag can't be used.
+   The _() function is a convenient alias automatically added by i18n extension.
+============================================================================== #}
+
+{# Example 6.1: Basic gettext #}
+{{ gettext('Home') }}
+{{ gettext('About Us') }}
+
+{# Example 6.2: Using _() alias (recommended) #}
+{{ _('Profile') }}
+{{ _('Settings') }}
+{{ _('Logout') }}
+
+{# Example 6.3: In variable assignments #}
+{% set page_title = _('Welcome Page') %}
+{% set error_msg = gettext('Invalid credentials') %}
+
+{# Example 6.4: In expressions and concatenation #}
+{% set greeting = _('Hello') ~ ', ' ~ user.name %}
+
+{# Example 6.5: As function arguments #}
+{% set status_text = _('Active') if user.is_active else _('Inactive') %}
+
+{# Example 6.6: In macro calls #}
+{{ render_button(_('Submit'), 'primary') }}
+
+
+{# ==============================================================================
+   SECTION 7: NGETTEXT - PLURALIZATION IN EXPRESSIONS
+   Syntax: {{ ngettext('singular', 'plural', count) }}
+   
+   Handles pluralization in contexts where trans tag cannot be used.
+   Returns appropriate form based on count parameter.
+============================================================================== #}
+
+{# Example 7.1: Basic ngettext #}
+{{ ngettext('1 apple', '%d apples', apple_count) }}
+
+{# Example 7.2: In variable assignment #}
+{% set item_text = ngettext('item', 'items', cart_size) %}
+{{ cart_size }} {{ item_text }}
+
+{# Example 7.3: With filter for count #}
+{{ ngettext('1 user', '%d users', users|length) }}
+
+{# Example 7.4: In conditional expressions #}
+{% set msg = ngettext('You have 1 message', 'You have %d messages', msg_count) %}
+
+{# Example 7.5: Complex count expression #}
+{{ ngettext('1 item selected', '%d items selected', selected_items|length) }}
+
+
+{# ==============================================================================
+   SECTION 8: PGETTEXT - CONTEXT-AWARE TRANSLATION IN EXPRESSIONS
+   Syntax: {{ pgettext('context', 'text') }}
+   
+   Added in Jinja 3.0. Provides context for disambiguation in expression contexts.
+   Equivalent to {% trans "context" %}text{% endtrans %} but usable in expressions.
+============================================================================== #}
+
+{# Example 8.1: Basic pgettext #}
+{{ pgettext('button', 'Save') }}
+{{ pgettext('action', 'Save') }}
+
+{# Example 8.2: Disambiguating identical strings #}
+{% set open_verb = pgettext('verb', 'Open') %}
+{% set open_adj = pgettext('status', 'Open') %}
+
+{# Example 8.3: In variable assignments #}
+{% set close_window = pgettext('window_action', 'Close') %}
+{% set close_door = pgettext('door_action', 'Close') %}
+
+{# Example 8.4: Multiple contexts for same base word #}
+{{ pgettext('fruit', 'Apple') }}        {# the fruit #}
+{{ pgettext('company', 'Apple') }}      {# Apple Inc. #}
+
+{# Example 8.5: In conditional #}
+{% set status = pgettext('order_status', 'Pending') if order.is_pending else pgettext('order_status', 'Complete') %}
+
+
+{# ==============================================================================
+   SECTION 9: NPGETTEXT - CONTEXT + PLURALIZATION IN EXPRESSIONS
+   Syntax: {{ npgettext('context', 'singular', 'plural', count) }}
+   
+   Added in Jinja 3.0. Combines context and pluralization in expression contexts.
+   Most powerful translation function, handles both disambiguation and plural forms.
+============================================================================== #}
+
+{# Example 9.1: Basic npgettext #}
+{{ npgettext('fruit', '1 apple', '%d apples', count) }}
+{{ npgettext('company', '1 Apple store', '%d Apple stores', store_count) }}
+
+{# Example 9.2: In variable assignment #}
+{% set item_msg = npgettext('shopping_cart', '%d item', '%d items', cart.size) %}
+
+{# Example 9.3: Different contexts, same pluralization #}
+{{ npgettext('music', '1 record', '%d records', album_count) }}
+{{ npgettext('sports', '1 record', '%d records', record_count) }}
+
+{# Example 9.4: Complex count expression #}
+{{ npgettext('notification', '1 unread message', '%d unread messages', messages|selectattr('unread')|list|length) }}
+
+
+{# ==============================================================================
+   SECTION 10: STANDARD GETTEXT (OLD STYLE)
+   
+   Before Jinja 2.5, or when newstyle=False, string formatting must be done
+   separately using the |format filter. This is the "old" style.
+   
+   Syntax: {{ gettext('text with %(var)s')|format(var=value) }}
+============================================================================== #}
+
+{# Example 10.1: Standard gettext with format #}
+{{ gettext('Hello, %(name)s!')|format(name=user.name) }}
+
+{# Example 10.2: Standard ngettext with format #}
+{{ ngettext('%(num)d apple', '%(num)d apples', apple_count)|format(num=apple_count) }}
+
+{# Example 10.3: Multiple placeholders #}
+{{ gettext('%(user)s has %(count)d items')|format(user=username, count=item_count) }}
+
+{# Example 10.4: Standard pgettext with format #}
+{{ pgettext('greeting', 'Hello, %(name)s!')|format(name=visitor) }}
+
+{# Example 10.5: Standard npgettext with format #}
+{{ npgettext('fruit', '%(num)d apple', '%(num)d apples', count)|format(num=count) }}
+
+
+{# ==============================================================================
+   SECTION 11: NEWSTYLE GETTEXT (RECOMMENDED)
+   
+   When newstyle=True (default in modern Jinja2), formatting is integrated.
+   Named parameters are passed directly to the gettext function.
+   
+   Syntax: {{ gettext('text with %(var)s', var=value) }}
+   
+   Benefits:
+   - Less typing, no separate |format call
+   - Mandatory named placeholders (prevents positional errors)
+   - Better autoescaping support
+   - Consistent behavior across all contexts
+============================================================================== #}
+
+{# Example 11.1: Newstyle gettext #}
+{{ gettext('Hello, %(name)s!', name=user.name) }}
+
+{# Example 11.2: Newstyle ngettext #}
+{{ ngettext('%(num)d apple', '%(num)d apples', apple_count) }}
+{# Note: num is automatically set to apple_count #}
+
+{# Example 11.3: Newstyle with multiple variables #}
+{{ gettext('%(user)s has %(count)d items', user=username, count=item_count) }}
+
+{# Example 11.4: Newstyle pgettext #}
+{{ pgettext('greeting', 'Hello, %(name)s!', name=visitor) }}
+
+{# Example 11.5: Newstyle npgettext #}
+{{ npgettext('fruit', '%(num)d apple', '%(num)d apples', count) }}
+{# Note: context and num automatically available #}
+
+{# Example 11.6: Newstyle with complex expressions #}
+{{ gettext('Total: %(amount)s', amount=(items|sum(attribute='price'))|round(2)) }}
+
+
+{# ==============================================================================
+   SECTION 12: PRACTICAL REAL-WORLD EXAMPLES
+   
+   Combining various i18n features in realistic scenarios.
+============================================================================== #}
+
+{# Example 12.1: User profile page #}
+<div class="profile">
+  <h1>{% trans trimmed username=user.display_name %}
+    Profile of {{ username }}
+  {% endtrans %}</h1>
+  
+  <p class="member-since">
+    {% trans trimmed date=user.join_date|date %}
+      Member since {{ date }}
+    {% endtrans %}
+  </p>
+  
+  <div class="stats">
+    <span>{{ npgettext('user_stats', '%(num)d post', '%(num)d posts', user.post_count) }}</span>
+    <span>{{ npgettext('user_stats', '%(num)d follower', '%(num)d followers', user.follower_count) }}</span>
+  </div>
+</div>
+
+{# Example 12.2: Shopping cart #}
+<div class="cart">
+  <h2>{% trans "shopping_cart" %}Your Cart{% endtrans %}</h2>
+  
+  {% if cart_items %}
+    {% trans trimmed count=cart_items|length, total=cart_total|currency %}
+      Your cart contains {{ count }} item.
+      Total: {{ total }}
+    {% pluralize %}
+      Your cart contains {{ count }} items.
+      Total: {{ total }}
+    {% endtrans %}
+    
+    <button>{{ pgettext('cart_action', 'Checkout') }}</button>
+    <button>{{ pgettext('cart_action', 'Clear') }}</button>
+  {% else %}
+    <p>{% trans %}Your cart is empty.{% endtrans %}</p>
+  {% endif %}
+</div>
+
+{# Example 12.3: File manager #}
+<div class="file-list">
+  <h3>{{ pgettext('file_manager', 'Files') }}</h3>
+  
+  {% for file in files %}
+    <div class="file-item">
+      <span class="name">{{ file.name }}</span>
+      <span class="size">{{ file.size|filesizeformat }}</span>
+      <span class="modified">
+        {% trans trimmed date=file.modified|date %}
+          Modified: {{ date }}
+        {% endtrans %}
+      </span>
+      
+      <div class="actions">
+        <button>{{ pgettext('file_action', 'Open') }}</button>
+        <button>{{ pgettext('file_action', 'Download') }}</button>
+        <button>{{ pgettext('file_action', 'Delete') }}</button>
+      </div>
+    </div>
+  {% endfor %}
+  
+  <div class="summary">
+    {{ npgettext('file_manager', '%(num)d file', '%(num)d files', files|length) }}
+  </div>
+</div>
+
+{# Example 12.4: Notification system #}
+<div class="notifications">
+  {% set unread = notifications|selectattr('unread')|list %}
+  
+  <h3>
+    {{ npgettext('notifications', '%(num)d notification', '%(num)d notifications', notifications|length) }}
+    {% if unread %}
+      ({{ npgettext('notifications', '%(num)d unread', '%(num)d unread', unread|length) }})
+    {% endif %}
+  </h3>
+  
+  {% for notif in notifications %}
+    <div class="notification {% if notif.unread %}unread{% endif %}">
+      {{ notif.message }}
+      <span class="time">{{ notif.created|timeago }}</span>
+      {% if notif.unread %}
+        <button>{{ pgettext('notification_action', 'Mark as read') }}</button>
+      {% endif %}
+    </div>
+  {% else %}
+    <p>{% trans %}No notifications.{% endtrans %}</p>
+  {% endfor %}
+</div>
+
+{# Example 12.5: Form with validation errors #}
+<form>
+  <div class="field">
+    <label>{{ _('Email Address') }}</label>
+    <input type="email" name="email" placeholder="{{ _('Enter your email') }}">
+    {% if errors.email %}
+      <span class="error">{{ _('Please enter a valid email address') }}</span>
+    {% endif %}
+  </div>
+  
+  <div class="field">
+    <label>{{ _('Password') }}</label>
+    <input type="password" name="password" placeholder="{{ _('Enter your password') }}">
+    {% if errors.password %}
+      <span class="error">
+        {% trans trimmed min=8 %}
+          Password must be at least {{ min }} characters
+        {% endtrans %}
+      </span>
+    {% endif %}
+  </div>
+  
+  <button type="submit">{{ pgettext('form_action', 'Submit') }}</button>
+  <button type="reset">{{ pgettext('form_action', 'Reset') }}</button>
+</form>
+
+
+{# ==============================================================================
+   SECTION 13: EDGE CASES AND SPECIAL SCENARIOS
+============================================================================== #}
+
+{# Example 13.1: Empty trans block (technically valid but not recommended) #}
+{% trans %}{% endtrans %}
+
+{# Example 13.2: Trans with only whitespace #}
+{% trans %}   {% endtrans %}
+
+{# Example 13.3: Variable binding with same name as context variable #}
+{% set name = "Original" %}
+{% trans name="Translated" %}
+  {{ name }}  {# Uses "Translated", not "Original" #}
+{% endtrans %}
+
+{# Example 13.4: Multiple consecutive trans blocks #}
+{% trans %}First{% endtrans %}{% trans %}Second{% endtrans %}{% trans %}Third{% endtrans %}
+
+{# Example 13.5: Trans inside other structures #}
+{% for item in items %}
+  <li>{% trans %}Item:{% endtrans %} {{ item }}</li>
+{% endfor %}
+
+{# Example 13.6: Nested pluralization (using functions, not tags) #}
+{% set outer = ngettext('1 group', '%d groups', group_count) %}
+{% set inner = ngettext('1 user', '%d users', user_count) %}
+{{ outer }}, {{ inner }}
+
+{# Example 13.7: Dynamic context (context must be literal, this won't work in trans tag) #}
+{# {% trans dynamic_context %}Text{% endtrans %} - INVALID! Context must be string literal #}
+{# Use pgettext with variable instead: #}
+{{ pgettext(message_context, 'Text') }}  {# Only works if context var is set at runtime #}
+
+{# Example 13.8: Very long translation string #}
+{% trans trimmed %}
+  This is a very long paragraph that contains multiple sentences and spans
+  many lines. It demonstrates that translation strings can be quite lengthy
+  and still work correctly with the i18n extension. The important thing is
+  to keep the content cohesive and meaningful for translators.
+{% endtrans %}
+
+{# Example 13.9: Pluralization with count=0 #}
+{% trans trimmed count=0 %}
+  You have {{ count }} message
+{% pluralize %}
+  You have {{ count }} messages
+{% endtrans %}
+
+{# Example 13.10: Using filters in trans variable bindings #}
+{% trans formatted_date=order.date|datetime('%Y-%m-%d'), total=order.total|currency %}
+  Order placed on {{ formatted_date }}, total: {{ total }}
+{% endtrans %}
+
+
+{# ==============================================================================
+   SECTION 14: COMMON PATTERNS AND BEST PRACTICES
+============================================================================== #}
+
+{# Pattern 1: Prefer trans tag for static blocks #}
+{# GOOD #}
+{% trans %}Welcome to our site{% endtrans %}
+{# AVOID #}
+{{ _('Welcome to our site') }}
+
+{# Pattern 2: Use trimmed for multi-line readability #}
+{# GOOD #}
+{% trans trimmed user=user.name %}
+  Hello {{ user }},
+  welcome back!
+{% endtrans %}
+{# LESS READABLE #}
+{% trans user=user.name %}Hello {{ user }}, welcome back!{% endtrans %}
+
+{# Pattern 3: Provide context for ambiguous strings #}
+{# GOOD #}
+{{ pgettext('button', 'Close') }}
+{{ pgettext('adjective', 'Close') }}  {# close proximity #}
+{# AMBIGUOUS #}
+{{ _('Close') }}
+
+{# Pattern 4: Use functions for dynamic/expression contexts #}
+{# GOOD #}
+{% set title = _('Home') if is_home else _('About') %}
+{# CANNOT USE TRANS TAG HERE #}
+
+{# Pattern 5: Keep HTML out of translation strings when possible #}
+{# GOOD #}
+<strong>{% trans %}Important{% endtrans %}</strong>
+{# AVOID #}
+{% trans %}<strong>Important</strong>{% endtrans %}
+
+{# Pattern 6: Group related text in single trans block #}
+{# GOOD #}
+{% trans trimmed name=product.name, price=product.price %}
+  Product: {{ name }}
+  Price: {{ price }}
+{% endtrans %}
+{# AVOID - harder for translators #}
+{% trans %}Product:{% endtrans %} {{ product.name }}
+{% trans %}Price:{% endtrans %} {{ product.price }}
+
+{# Pattern 7: Use meaningful variable names in trans blocks #}
+{# GOOD #}
+{% trans user_name=user.name, item_count=cart.size %}...{% endtrans %}
+{# POOR #}
+{% trans x=user.name, y=cart.size %}...{% endtrans %}
+
+
+{# ==============================================================================
+   NOTES ON ENVIRONMENT SETUP
+   
+   To use this template, the Jinja2 environment must be configured:
+   
+   from jinja2 import Environment
+   
+   # Method 1: With actual translations
+   env = Environment(extensions=['jinja2.ext.i18n'])
+   translations = get_translations()  # Your translation object
+   env.install_gettext_translations(translations, newstyle=True)
+   
+   # Method 2: With null translations (for development)
+   env = Environment(extensions=['jinja2.ext.i18n'])
+   env.install_null_translations(newstyle=True)
+   
+   # Method 3: With custom gettext callables
+   env = Environment(extensions=['jinja2.ext.i18n'])
+   env.install_gettext_callables(
+       gettext=my_gettext,
+       ngettext=my_ngettext,
+       pgettext=my_pgettext,  # Optional, added in Jinja 3.0
+       npgettext=my_npgettext,  # Optional, added in Jinja 3.0
+       newstyle=True
+   )
+   
+   Translation object requirements:
+   - Must implement: gettext(message) and ngettext(singular, plural, n)
+   - Optional (3.0+): pgettext(context, message) and npgettext(context, singular, plural, n)
+   - Compatible types: gettext.NullTranslations, gettext.GNUTranslations, Babel Translations
+============================================================================== #}
+
+{# ==============================================================================
+   END OF FILE - All valid i18n extension syntax patterns covered
+============================================================================== #}

@@ -1,0 +1,4 @@
+{# Example 13.6: Nested pluralization (using functions, not tags) #}
+{% set outer = ngettext('1 group', '%d groups', group_count) %}
+{% set inner = ngettext('1 user', '%d users', user_count) %}
+{{ outer }}, {{ inner }}

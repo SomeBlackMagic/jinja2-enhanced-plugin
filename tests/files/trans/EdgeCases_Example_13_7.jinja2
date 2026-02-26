@@ -1,0 +1,4 @@
+{# Example 13.7: Dynamic context (context must be literal, this won't work in trans tag) #}
+{# {% trans dynamic_context %}Text{% endtrans %} - INVALID! Context must be string literal #}
+{# Use pgettext with variable instead: #}
+{{ pgettext(message_context, 'Text') }}  {# Only works if context var is set at runtime #}

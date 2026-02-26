@@ -1,0 +1,6 @@
+{# Example 3.5: Pluralization with multiple variables #}
+{% trans count=messages|length, user=current_user.name %}
+  {{ user }}, you have {{ count }} message.
+{% pluralize %}
+  {{ user }}, you have {{ count }} messages.
+{% endtrans %}

@@ -1,0 +1,5 @@
+{# Pattern 7: Use meaningful variable names in trans blocks #}
+{# GOOD #}
+{% trans user_name=user.name, item_count=cart.size %}...{% endtrans %}
+{# POOR #}
+{% trans x=user.name, y=cart.size %}...{% endtrans %}

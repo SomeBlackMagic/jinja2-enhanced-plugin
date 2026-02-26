@@ -1,0 +1,5 @@
+{# Example 13.3: Variable binding with same name as context variable #}
+{% set name = "Original" %}
+{% trans name="Translated" %}
+  {{ name }}  {# Uses "Translated", not "Original" #}
+{% endtrans %}

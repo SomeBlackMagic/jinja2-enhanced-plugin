@@ -1,0 +1,10 @@
+{# Example 5.5: Context + trimmed + pluralization (full combo) #}
+{% trans "shopping_cart" trimmed count=cart_items|length %}
+  You have
+  {{ count }} item
+  in your cart.
+{% pluralize %}
+  You have
+  {{ count }} items
+  in your cart.
+{% endtrans %}

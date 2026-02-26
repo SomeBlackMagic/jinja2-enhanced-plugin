@@ -1,0 +1,9 @@
+{# Pattern 6: Group related text in single trans block #}
+{# GOOD #}
+{% trans trimmed name=product.name, price=product.price %}
+  Product: {{ name }}
+  Price: {{ price }}
+{% endtrans %}
+{# AVOID - harder for translators #}
+{% trans %}Product:{% endtrans %} {{ product.name }}
+{% trans %}Price:{% endtrans %} {{ product.price }}

@@ -1,0 +1,6 @@
+{# Example 13.9: Pluralization with count=0 #}
+{% trans trimmed count=0 %}
+  You have {{ count }} message
+{% pluralize %}
+  You have {{ count }} messages
+{% endtrans %}

@@ -1,0 +1,6 @@
+{# Example 3.4: Zero/singular/plural handling (depends on translation catalog) #}
+{% trans n=notification_count %}
+  You have {{ n }} new notification
+{% pluralize %}
+  You have {{ n }} new notifications
+{% endtrans %}

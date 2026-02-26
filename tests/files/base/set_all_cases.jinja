@@ -1,0 +1,121 @@
+{# ============================= #}
+{# Basic assignment              #}
+{# ============================= #}
+
+{% set a = 1 %}
+{% set b = "string" %}
+{% set c = true %}
+{% set d = none %}
+
+{# ============================= #}
+{# Arithmetic / expressions      #}
+{# ============================= #}
+
+{% set sum = 1 + 2 %}
+{% set expr = (1 + 2) * 3 %}
+{% set logic = a and b or c %}
+{% set neg = not a %}
+
+{# ============================= #}
+{# Variable reference            #}
+{# ============================= #}
+
+{% set x = y %}
+{% set y = x %}
+{% set z = undefined_var %}
+
+{# ============================= #}
+{# Filters                       #}
+{# ============================= #}
+
+{% set upper_name = name | upper %}
+{% set safe_html = html | safe %}
+{% set chained = value | trim | lower | replace("a", "b") %}
+
+{# ============================= #}
+{# Tests inside expressions      #}
+{# ============================= #}
+
+{% set is_defined = foo is defined %}
+{% set is_not_defined = foo is not defined %}
+{% set is_even = 2 is even %}
+{% set custom_test = value is qweqwe %}
+
+{# ============================= #}
+{# Collections                   #}
+{# ============================= #}
+
+{% set list_simple = [1, 2, 3] %}
+{% set list_expr = [a, b, c] %}
+{% set list_nested = [1, [2, 3], {"a": 1}] %}
+
+{% set dict_simple = {"a": 1, "b": 2} %}
+{% set dict_expr = {"x": a, "y": b} %}
+{% set dict_nested = {"k": {"x": 1}, "l": [1, 2]} %}
+
+{# ============================= #}
+{# Tuple unpacking               #}
+{# ============================= #}
+
+{% set a, b = 1, 2 %}
+{% set x, y = y, x %}
+{% set k, v = my_dict.popitem() %}
+{% set p, q, r = seq %}
+
+{# ============================= #}
+{# Tuple unpacking (edge cases)  #}
+{# ============================= #}
+
+{% set a, = [1] %}
+{% set a, b = [1, 2, 3] %}
+{% set a, b, c = [1] %}
+
+{# ============================= #}
+{# Assignment to attributes      #}
+{# ============================= #}
+
+{% set user.name = "admin" %}
+{% set config.value.enabled = true %}
+
+{# ============================= #}
+{# Assignment to subscripts      #}
+{# ============================= #}
+
+{% set data["key"] = 42 %}
+{% set matrix[0][1] = 5 %}
+
+{# ============================= #}
+{# Block form of set             #}
+{# ============================= #}
+
+{% set block_value %}
+  multi
+  line
+  content
+{% endset %}
+
+{% set html_block %}
+<div>
+  {{ value }}
+</div>
+{% endset %}
+
+{# ============================= #}
+{# Block set with filters        #}
+{# ============================= #}
+
+{% set trimmed %}
+   spaced content
+{% endset | trim %}
+
+{# ============================= #}
+{# Scope behavior (parser-level) #}
+{# ============================= #}
+
+{% for i in range(3) %}
+  {% set loop_var = i %}
+{% endfor %}
+
+{% if cond %}
+  {% set conditional = true %}
+{% endif %}

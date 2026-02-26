@@ -1,0 +1,59 @@
+{# ============================================================
+   Пример для ручного тестирования трёх фич:
+
+   1. BreadcrumbsProvider  — поставь курсор внутрь блока,
+                             вверху редактора появится цепочка
+   2. Commenter            — выдели текст, нажми Ctrl+Shift+/
+   3. SpellcheckingStrategy— подчёркивания только в комментах
+                             и строках, не на переменных
+   ============================================================ #}
+
+{# ---- Spell check: эта строка ПРОВЕРЯЕТСЯ (текст комментария) ---- #}
+
+{% extends "base.html" %}
+
+
+{# ---- BreadcrumbsProvider: поставь курсор на строку 33 ---- #}
+
+{% block content %}
+
+    {# Это шапка страницы - текст тут spell-checkится #}
+{#     <h1>Page title goes here</h1> #}
+
+    {# ---- Spell check: переменные НЕ подчёркиваются ---- #}
+    {{ user_profile.display_name }}
+    {{ filtered_items | truncate }}
+
+    {% for item in collection %}
+
+        {% if item.is_active and not item.is_hidden %}
+
+            {# Внутри for > if > block — breadcrumb покажет всю цепочку #}
+            <p>{{ item.title }}</p>
+
+            {# String literal — spell-checkится #}
+            {{ item.label | default('No label assigned') }}
+
+        {% endif %}
+
+    {% endfor %}
+
+    {# ---- Commenter: выдели несколько строк ниже и нажми Ctrl+Shift+/ ---- #}
+    <footer>
+        {{ footer_links }}
+        <p>Some footer text that should be spell checked</p>
+    </footer>
+
+{% endblock %}
+
+{# ---- Macro: breadcrumb покажет "macro render_card" ---- #}
+
+{% macro render_card(title, description, is_featured) %}
+
+    {# Тут breadcrumb: block content > macro render_card #}
+    <div class="card{% if is_featured %} card--featured{% endif %}">
+        <h2>{{ title }}</h2>
+        <p>{{ description }}</p>
+    </div>
+
+{% endmacro %}

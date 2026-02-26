@@ -1,0 +1,5 @@
+{# Pattern 1: Prefer trans tag for static blocks #}
+{# GOOD #}
+{% trans %}Welcome to our site{% endtrans %}
+{# AVOID #}
+{{ _('Welcome to our site') }}

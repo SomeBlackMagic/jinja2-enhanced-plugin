@@ -1,0 +1,19 @@
+{# Shared symbols for manual runIde checks. #}
+{# Exported top-level variables (should be available via imports). #}
+{% set theme = "light" %}
+{% set api_host, api_port = "localhost", 8080 %}
+
+{# Exported macros (should resolve and appear in completion). #}
+{% macro input(name, type="text", value="") -%}
+  <input type="{{ type }}" name="{{ name }}" value="{{ value }}">
+{%- endmacro %}
+
+{% macro button(label, kind="primary") -%}
+  <button class="btn btn-{{ kind }}">{{ label }}</button>
+{%- endmacro %}
+
+{# Non-exported nested set (should NOT be offered as imported variable). #}
+{% macro internal_state() -%}
+  {% set hidden_in_macro = "secret" %}
+  {{ hidden_in_macro }}
+{%- endmacro %}

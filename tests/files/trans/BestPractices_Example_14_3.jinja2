@@ -1,0 +1,6 @@
+{# Pattern 3: Provide context for ambiguous strings #}
+{# GOOD #}
+{{ pgettext('button', 'Close') }}
+{{ pgettext('adjective', 'Close') }}  {# close proximity #}
+{# AMBIGUOUS #}
+{{ _('Close') }}

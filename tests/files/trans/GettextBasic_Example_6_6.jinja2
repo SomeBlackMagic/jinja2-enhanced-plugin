@@ -1,0 +1,8 @@
+{% macro render_button(label, variant='default') %}
+<button class="btn btn-{{ variant }}">
+  {{ label }}
+</button>
+{% endmacro %}
+
+{# Example 6.6: In macro calls #}
+{{ render_button(_('Submit'), 'primary') }}

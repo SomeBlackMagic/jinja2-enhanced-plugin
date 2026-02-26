@@ -1,0 +1,23 @@
+{# Example 12.4: Notification system #}
+<div class="notifications">
+  {% set unread = notifications|selectattr('unread')|list %}
+
+  <h3>
+    {{ npgettext('notifications', '%(num)d notification', '%(num)d notifications', notifications|length) }}
+    {% if unread %}
+      ({{ npgettext('notifications', '%(num)d unread', '%(num)d unread', unread|length) }})
+    {% endif %}
+  </h3>
+
+  {% for notif in notifications %}
+    <div class="notification {% if notif.unread %}unread{% endif %}">
+      {{ notif.message }}
+      <span class="time">{{ notif.created|timeago }}</span>
+      {% if notif.unread %}
+        <button>{{ pgettext('notification_action', 'Mark as read') }}</button>
+      {% endif %}
+    </div>
+  {% else %}
+    <p>{% trans %}No notifications.{% endtrans %}</p>
+  {% endfor %}
+</div>

@@ -1,0 +1,6 @@
+{# Example 3.2: Explicit pluralization variable #}
+{% trans user_count=users|length, item_count=items|length %}
+  {{ user_count }} user has {{ item_count }} item.
+{% pluralize user_count %}
+  {{ user_count }} users have {{ item_count }} items.
+{% endtrans %}

@@ -1,0 +1,21 @@
+{# Manual checks for selective imports with aliases. #}
+{# Ctrl+Click targets should jump to shared_symbols.jinja2 macro/set definitions. #}
+{% from "shared_symbols.jinja2" import input as input_field, button, theme as active_theme, api_host, api_port %}
+
+
+{% from "shared_symbols.jinja2" import button as button_alias %}
+
+
+
+
+<div class="demo">
+  {{ input_field("username") }}
+  {{ button("Apply") }}
+  {{ button_alias("Apply") }}
+
+  <p>Active theme: {{ active_theme }}</p>
+  <p>Service: {{ api_host }}:{{ api_port }}</p>
+
+  {# Fallback/negative examples. #}
+{#   {{ missing_name }} #}
+</div>

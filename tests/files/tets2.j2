@@ -1,0 +1,20 @@
+{% if false is false %}TEST:false{% endif %}
+{% if "upper" is filter %}TEST:filter-exists{% endif %}
+{% if none is none %}TEST:none{% endif %}
+{% if true is true %}TEST:true{% endif %}
+
+{% for item in items %}
+  {% if item.active %}
+    {{ item.name }}
+  {% endif %}
+{% endfor %}
+
+
+{% set s = "  hello  " %}
+{% set n = -42 %}
+{% set f = 3.14159 %}
+{% set seq = [3, 1, 2, 2] %}
+{% set mp = {"a": 1, "b": 2} %}
+{% set html = "<b>X</b>" %}
+{% set safe_html = html|safe %}
+{% set esc_html = html|e %}

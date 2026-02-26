@@ -1,0 +1,2 @@
+{# Example 8.5: In conditional #}
+{% set status = pgettext('order_status', 'Pending') if order.is_pending else pgettext('order_status', 'Complete') %}

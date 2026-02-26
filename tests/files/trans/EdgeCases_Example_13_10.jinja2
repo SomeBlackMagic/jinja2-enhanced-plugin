@@ -1,0 +1,4 @@
+{# Example 13.10: Using filters in trans variable bindings #}
+{% trans formatted_date=order.date|datetime('%Y-%m-%d'), total=order.total|currency %}
+  Order placed on {{ formatted_date }}, total: {{ total }}
+{% endtrans %}

@@ -1,0 +1,5 @@
+{# Pattern 5: Keep HTML out of translation strings when possible #}
+{# GOOD #}
+<strong>{% trans %}Important{% endtrans %}</strong>
+{# AVOID #}
+{% trans %}<strong>Important</strong>{% endtrans %}

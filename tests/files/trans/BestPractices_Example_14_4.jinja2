@@ -1,0 +1,4 @@
+{# Pattern 4: Use functions for dynamic/expression contexts #}
+{# GOOD #}
+{% set title = _('Home') if is_home else _('About') %}
+{# CANNOT USE TRANS TAG HERE #}

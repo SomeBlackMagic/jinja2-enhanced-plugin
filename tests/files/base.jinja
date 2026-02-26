@@ -1,0 +1,301 @@
+
+{# ======================================================================
+  JINJA 3.1.6 POSITIVE SYNTAX CORPUS (core + i18n)
+  Covers:
+    - all builtin filters
+    - all builtin tests
+    - all default global functions
+    - if/for/else, recursive for, set (inline + block), macros, call/caller
+    - blocks, extends/include/import (syntax forms)
+    - raw, whitespace control
+    - i18n: trans/pluralize/trimmed/context + gettext functions
+====================================================================== #}
+
+{# ----------------------------------------------------------------------
+  GLOBAL FUNCTIONS (default)
+  range, lipsum, dict, cycler, joiner, namespace
+----------------------------------------------------------------------- #}
+
+{% set g_range = range(1, 5) %}
+{% set g_lipsum_html = lipsum(1) %}
+{% set g_dict = dict(foo="bar", n=2) %}
+{% set g_cycle = cycler("odd", "even") %}
+{% set g_join = joiner(", ") %}
+{% set ns = namespace(total=0, out=[]) %}
+
+{{ g_range|list }}
+{{ g_lipsum_html }}
+{{ g_dict.items()|list }}
+{{ g_cycle.current }} {{ g_cycle.next() }} {{ g_cycle.reset() }} {{ g_cycle.current }}
+{{ g_join() }}A{{ g_join() }}B{{ g_join() }}C
+{{ ns.total }}
+
+{# ----------------------------------------------------------------------
+  LITERALS / EXPRESSIONS / OPERATORS
+----------------------------------------------------------------------- #}
+{% set s = "  hello  " %}
+{% set n = -42 %}
+{% set f = 3.14159 %}
+{% set seq = [3, 1, 2, 2] %}
+{% set mp = {"a": 1, "b": 2} %}
+{% set html = "<b>X</b>" %}
+{% set safe_html = html|safe %}
+{% set esc_html = html|e %}
+
+{{ "a" ~ "b" ~ 1 }}
+{{ (1 + 2) * 3 }}
+{{ 7 // 3 }} {{ 7 % 3 }}
+{{ (n if n < 0 else 0) }}
+
+
+
+{# ----------------------------------------------------------------------
+  CONTROL: if/elif/else + nested
+----------------------------------------------------------------------- #}
+{% set x=1 %}
+{% set y=1 %}
+
+{% if x > 0 and y > 0 %}
+  {% if x != y %}
+    X!=Y
+  {% else %}
+    X==Y
+  {% endif %}
+{% elif x == 0 %}
+  X==0
+{% else %}
+  X<0
+{% endif %}
+
+{# ----------------------------------------------------------------------
+  LOOPS: for, for-else, nested, loop vars, for-if, recursive
+----------------------------------------------------------------------- #}
+{% for i in range(0, 3) %}
+  {{ loop.index }} {{ loop.index0 }} {{ loop.revindex }} {{ loop.revindex0 }}
+  {{ loop.first }} {{ loop.last }} {{ loop.length }}
+  {{ loop.cycle("A", "B") }}={{ i }}
+{% endfor %}
+
+{% set empty_seq=[] %}
+
+{% for v in empty_seq %}
+  {{ v }}
+{% else %}
+  EMPTY LOOP
+{% endfor %}
+
+{% for k, v in mp.items() %}
+  {{ k }}={{ v }}
+{% endfor %}
+
+{% for i in seq if i is even %}
+  EVEN={{ i }}
+{% endfor %}
+
+{% set tree = [{"name":"root","children":[{"name":"a","children":[]},{"name":"b","children":[{"name":"b1","children":[]}]}]}] %}
+{% for node in tree recursive %}
+  {{ "-" * loop.depth0 }}{{ node.name }}
+  {% if node.children %}
+    {{ loop(node.children) }}
+  {% endif %}
+{% endfor %}
+
+{# ----------------------------------------------------------------------
+  BUILTIN TESTS (ALL in 3.1.x list)
+  boolean, even, in, mapping, sequence, callable, false, integer, ne,
+  string, defined, filter, iterable, none, test, divisibleby, float, le,
+  number, true, eq, ge, lower, odd, undefined, escaped, gt, lt, sameas, upper
+----------------------------------------------------------------------- #}
+{% set t_bool = true %}
+{% set t_int = 10 %}
+{% set t_float = 2.5 %}
+{% set t_str = "ABC" %}
+{% set t_seq = [1, 2] %}
+{% set t_map = {"k": "v"} %}
+{% set t_undef = missing_value %}
+
+
+{# ----------------------------------------------------------------------
+  BUILTIN FILTERS (ALL in 3.1.x list)
+  abs, attr, batch, capitalize, center, default, dictsort, escape,
+  filesizeformat, first, float, forceescape, format, groupby, indent,
+  int, items, join, last, length, list, lower, map, max, min, pprint,
+  random, reject, rejectattr, replace, reverse, round, safe, select,
+  selectattr, slice, sort, string, striptags, sum, title, tojson, trim,
+  truncate, unique, upper, urlencode, urlize, wordcount, wordwrap, xmlattr
+----------------------------------------------------------------------- #}
+{{ n|abs }}
+
+{{ mp|items|list }}          {# attr() #}
+{{ seq|batch(3, 0)|list }}
+{{ "hello"|capitalize }}
+{{ "x"|center(5) }}
+{{ missing|default("fallback") }}
+{{ mp|dictsort|list }}
+{{ html|escape }}                    {# escape() #}
+{{ 12345|filesizeformat }}
+{{ seq|first }}
+{{ "3.14"|float }}
+{{ html|forceescape }}               {# forceescape() #}
+{{ "Hello, %s!"|format("World") }}   {# format() #}
+{{ [ {"role":"a"},{"role":"b"},{"role":"a"} ]|groupby("role")|list }}
+{{ "a\nb"|indent(2) }}
+{{ "42"|int }}
+{{ mp|items|list }}
+{{ ["a","b","c"]|join(",") }}
+{{ seq|last }}
+{{ seq|length }}
+{{ "abc"|list }}
+{{ "ABC"|lower }}
+{{ [1,2,3]|map("string")|list }}     {# map() #}
+{{ seq|max }}
+{{ seq|min }}
+{{ mp|pprint }}
+{{ seq|random }}
+{{ [1,2,3,4]|reject("odd")|list }}
+{{ [ {"a":1},{"a":2} ]|rejectattr("a", "eq", 2)|list }}
+{{ "hello"|replace("h","H") }}
+{{ "abc"|reverse }}
+{{ 3.14159|round(2) }}
+{{ safe_html|safe }}
+{{ [1,2,3,4]|select("even")|list }}
+{{ [ {"a":1},{"a":2} ]|selectattr("a", "gt", 1)|list }}
+{{ [1,2,3,4,5]|slice(2)|list }}
+{{ [3,1,2]|sort|list }}
+{{ 123|string }}
+{{ "<b>Hi</b>"|striptags }}
+{{ [1,2,3]|sum }}
+{{ "hello world"|title }}
+{{ {"a":1,"b":[1,2]}|tojson }}
+{{ s|trim }}
+{{ "hello world"|truncate(8, true, "...") }}
+{{ seq|unique|list }}
+{{ "abc"|upper }}
+{{ "a b"|urlencode }}
+{{ "See http://example.com"|urlize }}
+{{ "one two three"|wordcount }}
+{{ "one two three"|wordwrap(5) }}
+{{ {"data_id":"1","class":"x"}|xmlattr }}
+
+{# ----------------------------------------------------------------------
+  MACROS / CALLER
+----------------------------------------------------------------------- #}
+{% macro render_kv(k, v="v") -%}
+  {{ k }}={{ v }}
+{%- endmacro %}
+
+{% macro wrap(tag="div") -%}
+<{{ tag }}>
+  {{ caller() }}
+</{{ tag }}>
+{%- endmacro %}
+
+{{ render_kv("k1", 1) }}
+{{ render_kv("k2") }}
+
+{% call wrap("section") %}
+  {% for i in range(2) %}
+    {{ render_kv("i", i) }}
+  {% endfor %}
+{% endcall %}
+
+{# ----------------------------------------------------------------------
+  TEMPLATE INHERITANCE / BLOCKS
+  (extends placed here for syntax coverage; execution depends on loader)
+----------------------------------------------------------------------- #}
+{% extends "base_316.j2" %}
+
+{% block header %}
+  HEADER {{ super() }}
+{% endblock %}
+
+{% block content %}
+  {% block inner %}
+    INNER
+  {% endblock %}
+{% endblock %}
+
+{% block footer %}
+  FOOTER
+{% endblock %}
+
+{# ----------------------------------------------------------------------
+  INCLUDE / IMPORT (all core syntactic variants)
+----------------------------------------------------------------------- #}
+{% import "macros_316.j2" as m %}
+{% from "macros_316.j2" import some_macro as imported_macro %}
+
+{% include "partial_316.j2" %}
+{% include "partial_316.j2" with context %}
+{% include "partial_316.j2" without context %}
+{% include "missing_316.j2" ignore missing %}
+{% include "missing_316.j2" ignore missing with context %}
+{% include "missing_316.j2" ignore missing without context %}
+{% include ["first_316.j2", "second_316.j2"] ignore missing %}
+
+{# ----------------------------------------------------------------------
+  WHITESPACE CONTROL (+ / - modifiers)
+----------------------------------------------------------------------- #}
+{%- if true -%}TRIMMED{%- endif -%}
+{% if true %}LSTRIP DISABLED{% endif %}
+{% if true +%}TRIM DISABLED{% endif %}
+{{- "LEFT" }}{{ "RIGHT" -}}
+
+{# ----------------------------------------------------------------------
+  RAW
+----------------------------------------------------------------------- #}
+{% raw %}
+{{ not_evaluated }}
+{% if also_not_evaluated %}{% endif %}
+{% endraw %}
+
+{# ----------------------------------------------------------------------
+  I18N (requires i18n extension enabled + gettext functions installed)
+  Covers: trans, pluralize, trimmed/notrimmed, context (pgettext/npgettext),
+  and expression functions: _, gettext, ngettext, pgettext, npgettext
+----------------------------------------------------------------------- #}
+
+{% trans %}Hello{% endtrans %}
+
+{% trans name="World" %}
+Hello {{ name }}
+{% endtrans %}
+
+{% set count = 2 %}
+{% trans count=count %}
+There is {{ count }} item.
+{% pluralize %}
+There are {{ count }} items.
+{% endtrans %}
+
+{% trans trimmed book_title="X" %}
+This is {{ book_title }}.
+You should read it!
+{% endtrans %}
+
+{% trans notrimmed %}
+Line1
+Line2
+{% endtrans %}
+
+{# context-aware translation (added in 3.1) #}
+{% trans "fruit" %}apple{% endtrans %}
+
+{% trans "fruit" trimmed count -%}
+1 apple
+{%- pluralize -%}
+{{ count }} apples
+{%- endtrans %}
+
+{{ _("Hello") }}
+{{ gettext("Hello") }}
+{{ ngettext("item", "items", count) }}
+{{ pgettext("fruit", "apple") }}
+{{ npgettext("fruit", "apple", "apples", count) }}
+
+
+{{ self }}
+
+{{ @ }}
+{% $ %}
+{{ @#$ }}

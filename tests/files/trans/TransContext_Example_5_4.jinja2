@@ -1,0 +1,6 @@
+{# Example 5.4: Context with pluralization #}
+{% trans "fruit" count=apple_count %}
+  {{ count }} apple
+{% pluralize %}
+  {{ count }} apples
+{% endtrans %}

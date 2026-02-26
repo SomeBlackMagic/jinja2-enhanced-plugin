@@ -1,0 +1,2 @@
+{# Example 11.6: Newstyle with complex expressions #}
+{{ gettext('Total: %(amount)s', amount=(items|sum(attribute='price'))|round(2)) }}

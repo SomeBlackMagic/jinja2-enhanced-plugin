@@ -1,0 +1,4 @@
+{# Example 2.5: Multiple variables with multiple uses #}
+{% trans first=user.first_name, last=user.last_name %}
+  User: {{ first }} {{ last }} ({{ first }}.{{ last }}@example.com)
+{% endtrans %}

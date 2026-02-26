@@ -1,0 +1,25 @@
+{# Example 12.5: Form with validation errors #}
+<form>
+  <div class="field">
+    <label>{{ _('Email Address') }}</label>
+    <input type="email" name="email" placeholder="{{ _('Enter your email') }}">
+    {% if errors.email %}
+      <span class="error">{{ _('Please enter a valid email address') }}</span>
+    {% endif %}
+  </div>
+
+  <div class="field">
+    <label>{{ _('Password') }}</label>
+    <input type="password" name="password" placeholder="{{ _('Enter your password') }}">
+    {% if errors.password %}
+      <span class="error">
+        {% trans trimmed min=8 %}
+          Password must be at least {{ min }} characters
+        {% endtrans %}
+      </span>
+    {% endif %}
+  </div>
+
+  <button type="submit">{{ pgettext('form_action', 'Submit') }}</button>
+  <button type="reset">{{ pgettext('form_action', 'Reset') }}</button>
+</form>

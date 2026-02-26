@@ -1,0 +1,4 @@
+{# Example 2.4: Complex expression binding #}
+{% trans total_price=(items|sum(attribute='price'))|round(2) %}
+  Total: ${{ total_price }}
+{% endtrans %}

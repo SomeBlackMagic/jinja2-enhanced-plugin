@@ -1,0 +1,405 @@
+{# jinja2: ignore-file[unknown-test] #}
+jinja2: ignore-file[undefined-variable]
+{# jinja2: ignore-file[unknown-filter] #}
+
+{% set salt={''} %}
+{% set opts={''} %}
+{% set pillar={''} %}
+{% set grains={''} %}
+{% set sls={''} %}
+{% set saltenv={''} %}
+{% set slspath={''} %}
+{% set sls_path={''} %}
+{% set slsdotpath={''} %}
+{% set slscolonpath={''} %}
+{% set tplpath={''} %}
+{# ======================================================================
+  File: salt_jinja_100pct_coverage.jinja
+  Purpose: 100% syntax coverage of Salt-added Jinja surface (Salt 3007+ docs)
+  Notes:
+    - Many constructs are placed under `{% if false %}` to avoid runtime effects
+      (raise, imports, logging, profiling), while still being parsed by Jinja.
+    - This file targets syntax coverage; it is not intended to render cleanly
+      without Salt files existing for imports, etc.
+====================================================================== #}
+
+{# ----------------------------------------------------------------------
+  0) Base sample values (pure Jinja)
+---------------------------------------------------------------------- #}
+{% set _s = 'abcDEF123' %}
+{% set _lst = [3, 1, 2, 2] %}
+{% set _lst2 = [2, 3, 4] %}
+{% set _dict = {'a': 1, 'b': {'c': [1, 2]}, 'k': 'v'} %}
+{% set _dict2 = {'a': 1, 'b': {'c': [1, 3]}, 'x': 'y'} %}
+{% set _nested = {'bar': {'baz': [1, 2]}} %}
+{% set _dt = datetime if datetime is defined else none %}
+
+{# ----------------------------------------------------------------------
+  1) Salt template context variables (SLS Template Variable Reference)
+---------------------------------------------------------------------- #}
+SALT_VAR_EXAMPLE: {{ salt['grains.get']('os', 'unknown') if salt is defined else 'salt_undefined' }}
+OPTS_CACHEDIR: {{ opts['cachedir'] if opts is defined and 'cachedir' in opts else 'opts_undefined' }}
+PILLAR_DIRECT: {{ pillar.get('key', 'pillar_undefined') if pillar is defined else 'pillar_undefined' }}
+GRAINS_DIRECT: {{ grains.get('os', 'grains_undefined') if grains is defined else 'grains_undefined' }}
+
+SALTENV: {{ saltenv if saltenv is defined else 'saltenv_undefined' }}
+
+SLS: {{ sls if sls is defined else 'sls_undefined' }}
+SLSPATH: {{ slspath if slspath is defined else 'slspath_undefined' }}
+SLS_PATH: {{ sls_path if sls_path is defined else 'sls_path_undefined' }}
+SLSDOTPATH: {{ slsdotpath if slsdotpath is defined else 'slsdotpath_undefined' }}
+SLSCOLONPATH: {{ slscolonpath if slscolonpath is defined else 'slscolonpath_undefined' }}
+
+TPLPATH: {{ tplpath if tplpath is defined else 'tplpath_undefined' }}
+TPLFILE: {{ tplfile if tplfile is defined else 'tplfile_undefined' }}
+TPLDIR: {{ tpldir if tpldir is defined else 'tpldir_undefined' }}
+TPLDOT: {{ tpldot if tpldot is defined else 'tpldot_undefined' }}
+
+{# ----------------------------------------------------------------------
+  2) Calling Salt functions: salt['mod.fun'] and salt.mod.fun shorthand
+---------------------------------------------------------------------- #}
+{% if salt is defined %}
+CALL_SALT_DICT: {{ salt['cmd.run']('whoami') }}
+CALL_SALT_DOT:  {{ salt.cmd.run('whoami') }}
+{% else %}
+CALL_SALT_DICT: salt_undefined
+CALL_SALT_DOT:  salt_undefined
+{% endif %}
+
+{# ----------------------------------------------------------------------
+  3) Debugging: show_full_context()
+---------------------------------------------------------------------- #}
+{% if show_full_context is defined %}
+FULL_CONTEXT_AS_YAML: {{ show_full_context()|yaml(False) }}
+{% else %}
+FULL_CONTEXT_AS_YAML: show_full_context_undefined
+{% endif %}
+
+{# ----------------------------------------------------------------------
+  4) Errors: raise('Custom Error')
+---------------------------------------------------------------------- #}
+{% if false %}
+  {{ raise('Custom Error') }}
+{% endif %}
+
+{# ----------------------------------------------------------------------
+  5) Logging from Jinja: do salt.log.*
+---------------------------------------------------------------------- #}
+{% if false and salt is defined %}
+  {%- do salt.log.debug('jinja debug') -%}
+  {%- do salt.log.info('jinja info') -%}
+  {%- do salt.log.warning('jinja warning') -%}
+  {%- do salt.log.error('jinja error') -%}
+  {%- do salt.log.critical('jinja critical') -%}
+{% endif %}
+
+{# ----------------------------------------------------------------------
+  6) Profiling blocks: {% profile as 'name' %}...{% endprofile %}
+---------------------------------------------------------------------- #}
+{% if false %}
+  {%- profile as 'profile block example' -%}
+    {%- set tmp = {'counter': 0} -%}
+    {%- for i in range(10) -%}
+      {%- do tmp.update({'counter': i}) -%}
+    {%- endfor -%}
+    PROFILE_COUNTER: {{ tmp['counter'] }}
+  {%- endprofile -%}
+{% endif %}
+
+{# ----------------------------------------------------------------------
+  7) import_* blocks (import_yaml/import_json/import_text)
+---------------------------------------------------------------------- #}
+{% if false %}
+  {%- import_yaml 'defaults.yml' as imported_yaml -%}
+  {%- import_json 'data.json' as imported_json -%}
+  {%- import_text 'notes.txt' as imported_text -%}
+  IMPORTED_YAML_EXAMPLE: {{ imported_yaml }}
+  IMPORTED_JSON_EXAMPLE: {{ imported_json }}
+  IMPORTED_TEXT_EXAMPLE: {{ imported_text }}
+{% endif %}
+
+{# ----------------------------------------------------------------------
+  8) load_* tags (load_yaml/load_json/load_text) and endload
+---------------------------------------------------------------------- #}
+{%- load_yaml as _ly -%}
+a: 1
+b:
+  c:
+    - x
+    - y
+{%- endload -%}
+LOAD_YAML_TAG_A: {{ _ly.a }}
+LOAD_YAML_TAG_BC0: {{ _ly.b.c[0] }}
+
+{%- load_json as _lj -%}
+{"x": 10, "y": ["a", "b"], "z": {"k": true}}
+{%- endload -%}
+LOAD_JSON_TAG_X: {{ _lj.x }}
+LOAD_JSON_TAG_Y1: {{ _lj.y[1] }}
+LOAD_JSON_TAG_ZK: {{ _lj.z.k }}
+
+{%- load_text as _lt -%}
+hello
+world
+{%- endload -%}
+LOAD_TEXT_TAG: {{ _lt }}
+
+{# ======================================================================
+  8b) load_yaml / load_json as PIPE FILTERS (not tags)
+  These are distinct from the {% load_yaml as x %} tag form.
+====================================================================== #}
+{%- set _ly_filter = "{foo: it works}" | load_yaml -%}
+LOAD_YAML_FILTER: {{ _ly_filter.foo }}
+
+{%- set _lj_filter = '{"bar": "for real"}' | load_json -%}
+LOAD_JSON_FILTER: {{ _lj_filter.bar }}
+
+{# ======================================================================
+  9) Salt custom filters (100% list from Salt docs TOC)
+  Section “Filters” in Salt “Understanding Jinja”.
+====================================================================== #}
+
+{# 9.0 SerializerExtension format filters: yaml / json / python / xml #}
+{%- set _ser_data = {'foo': True, 'bar': 42, 'baz': [1, 2, 3], 'qux': 2.0} -%}
+FORMAT_YAML_FLOW:  {{ _ser_data | yaml }}
+FORMAT_YAML_BLOCK: {{ _ser_data | yaml(False) }}
+FORMAT_JSON:       {{ _ser_data | json }}
+FORMAT_PYTHON:     {{ _ser_data | python }}
+FORMAT_XML:        {{ {'root': _ser_data} | xml }}
+
+{# 9.1 strftime #}
+STRFTIME_NOW: {{ none | strftime() }}
+STRFTIME_LITERAL: {{ "2002/12/25" | strftime("%y") }}
+
+{# 9.2 sequence #}
+SEQUENCE_FROM_SCALAR: {{ 'x' | sequence }}
+
+{# 9.3 yaml_encode / yaml_dquote / yaml_squote #}
+YAML_ENCODE_INT: {{ 7 | yaml_encode }}
+YAML_ENCODE_NONE: {{ none | yaml_encode }}
+YAML_DQUOTE: {{ 'The word is "salty"' | yaml_dquote }}
+YAML_SQUOTE: {{ "it's salty" | yaml_squote }}
+
+{# 9.4 dict_to_sls_yaml_params #}
+{%- set _params = {"name": "thing", "changes": True, "warnings": "OMG"} -%}
+DICT_TO_SLS_YAML_PARAMS:
+{{ _params | dict_to_sls_yaml_params }}
+
+{# 9.5 to_bool #}
+TO_BOOL_YES: {{ 'yes' | to_bool }}
+TO_BOOL_NO:  {{ 'no'  | to_bool }}
+TO_BOOL_1:   {{ 1     | to_bool }}
+TO_BOOL_0:   {{ 0     | to_bool }}
+
+{# 9.6 exactly_n_true / exactly_one_true #}
+EXACTLY_N_TRUE_2: {{ ['yes', 0, false, 'True'] | exactly_n_true(2) }}
+EXACTLY_ONE_TRUE: {{ ['yes', false, 0, none] | exactly_one_true }}
+
+{# 9.7 quote #}
+QUOTED: {{ 'abc' | quote }}
+
+{# 9.8 regex_search / regex_match / regex_replace #}
+REGEX_SEARCH_GROUPS: {{ 'abcdefabcdef' | regex_search('BC(.*)', ignorecase=True) }}
+REGEX_MATCH_BEGIN:   {{ 'abcdefabcdef' | regex_match('BC(.*)', ignorecase=True) }}
+REGEX_REPLACE:       {{ 'yes, this is a TEST' | regex_replace(' ([a-z])', '__\\1', ignorecase=True) }}
+
+{# 9.9 uuid #}
+UUID_V4: {{ '' | uuid }}
+
+{# 9.10 is_list / is_iter #}
+IS_LIST: {{ _lst | is_list }}
+IS_ITER: {{ _lst | is_iter }}
+
+{# 9.11 min / max / avg #}
+MIN: {{ _lst | min }}
+MAX: {{ _lst | max }}
+AVG: {{ _lst | avg }}
+
+{# 9.12 set theory: union/intersect/difference/symmetric_difference #}
+UNION: {{ _lst | union(_lst2) }}
+INTERSECT: {{ _lst | intersect(_lst2) }}
+DIFFERENCE: {{ _lst | difference(_lst2) }}
+SYMMETRIC_DIFFERENCE: {{ _lst | symmetric_difference(_lst2) }}
+
+{# 9.13 flatten (with optional levels / preserve_nulls params) #}
+FLATTEN: {{ [1, [2, [3]]] | flatten }}
+FLATTEN_LEVELS1: {{ [1, [2, [3]]] | flatten(levels=1) }}
+FLATTEN_PRESERVE_NULLS: {{ [1, none, [2, [3]]] | flatten(levels=1, preserve_nulls=True) }}
+
+{# 9.14 itertools-like filters #}
+COMBINATIONS_2: {{ [1,2,3] | combinations(2) | list }}
+COMB_WITH_REPL_2: {{ [1,2,3] | combinations_with_replacement(2) | list }}
+COMPRESS: {{ ['a','b','c'] | compress([1,0,1]) | list }}
+PERMUTATIONS_2: {{ [1,2,3] | permutations(2) | list }}
+PRODUCT_2: {{ [1,2] | product(['a','b']) | list }}
+ZIP: {{ [1,2] | zip(['a','b']) | list }}
+ZIP_LONGEST: {{ [1] | zip_longest(['a','b'], fillvalue='X') | list }}
+
+{# 9.15 method_call #}
+METHOD_CALL_LOWER: {{ 'ABC' | method_call('lower') }}
+
+{# 9.16 is_sorted #}
+IS_SORTED_TRUE: {{ [1,2,3] | is_sorted }}
+IS_SORTED_FALSE: {{ [2,1,3] | is_sorted }}
+
+{# 9.17 compare_lists / compare_dicts #}
+COMPARE_LISTS: {{ [1,2] | compare_lists([1,3]) }}
+COMPARE_DICTS: {{ _dict | compare_dicts(_dict2) }}
+
+{# 9.17b is_ip with options param #}
+IS_IP_LOOPBACK: {{ '127.0.0.1' | is_ip(options='loopback') }}
+IS_IP_PRIVATE:  {{ '192.168.0.1' | is_ip(options='private') }}
+
+{# 9.18 is_hex / contains_whitespace #}
+IS_HEX_TRUE: {{ 'deadBEEF' | is_hex }}
+CONTAINS_WS_TRUE: {{ 'a b' | contains_whitespace }}
+
+{# 9.19 substring_in_list #}
+SUBSTRING_IN_LIST: {{ 'foo' | substring_in_list(['xxfoo', 'bar']) }}
+
+{# 9.20 check_whitelist_blacklist #}
+CHECK_WL_BL: {{ '10.0.0.1' | check_whitelist_blacklist(whitelist=['10.0.0.0/24'], blacklist=['10.0.0.5']) }}
+
+{# 9.21 date_format #}
+DATE_FORMAT: {{ '2020-01-02' | date_format('%Y-%m-%d', '%d/%m/%Y') }}
+
+{# 9.22 to_num / to_bytes #}
+TO_NUM_INT: {{ '42' | to_num }}
+TO_BYTES: {{ 'hello' | to_bytes }}
+
+{# 9.23 json_encode_list / json_encode_dict / tojson #}
+JSON_ENCODE_LIST: {{ [1,2,3] | json_encode_list }}
+JSON_ENCODE_DICT: {{ {'a':1} | json_encode_dict }}
+TOJSON_DEFAULT: {{ {'a':1} | tojson }}
+
+{# 9.24 random_hash / random_sample / random_shuffle #}
+RANDOM_HASH: {{ 99999999 | random_hash }}
+RANDOM_HASH_SHA512: {{ 99999999 | random_hash('sha512') }}
+RANDOM_SAMPLE: {{ [1,2,3,4] | random_sample(2) | list }}
+RANDOM_SHUFFLE: {{ [1,2,3,4] | random_shuffle | list }}
+
+{# 9.25 set_dict_key_value / append_dict_key_value / extend_dict_key_value / update_dict_key_value #}
+{%- set _sd = {} -%}
+SET_DICT_KEY_VALUE: {{ _sd | set_dict_key_value('bar:baz', 42) }}
+APPEND_DICT_KEY_VALUE: {{ {'bar': {'baz': [1,2]}} | append_dict_key_value('bar:baz', 42) }}
+EXTEND_DICT_KEY_VALUE: {{ {'bar': {'baz': [1,2]}} | extend_dict_key_value('bar:baz', [42,42]) }}
+UPDATE_DICT_KEY_VALUE: {{ {'bar': {'baz': {'qux': 1}}} | update_dict_key_value('bar:baz', {'quux': 3}) }}
+
+{# 9.25b to_entries / from_entries (Salt 3007.0) #}
+TO_ENTRIES: {{ {'a': 1, 'b': 2} | to_entries }}
+FROM_ENTRIES: {{ [{'key': 'a', 'value': 1}, {'key': 'b', 'value': 2}] | from_entries }}
+
+{# 9.26 md5 / sha256 / sha512 #}
+MD5: {{ 'abc' | md5 }}
+SHA256: {{ 'abc' | sha256 }}
+SHA512: {{ 'abc' | sha512 }}
+
+{# 9.27 base64_encode / base64_decode #}
+B64_ENC: {{ 'abc' | base64_encode }}
+B64_DEC: {{ 'YWJj' | base64_decode }}
+
+{# 9.28 hmac #}
+HMAC_SHA256: {{ 'data' | hmac('secret', 'sha256') }}
+
+{# 9.29 http_query #}
+{# NOTE: network side effects, keep under if false #}
+{% if false %}
+HTTP_QUERY: {{ 'https://example.com' | http_query }}
+{% endif %}
+
+{# 9.30 traverse #}
+TRAVERSE: {{ _dict | traverse('b:c:0', default='na') }}
+
+{# 9.31 json_query #}
+JSON_QUERY: {{ {'a': {'b': 1}} | json_query('a.b') }}
+
+{# 9.32 to_snake_case / to_camelcase #}
+TO_SNAKE: {{ 'HelloWorld' | to_snake_case }}
+TO_CAMEL: {{ 'hello_world' | to_camelcase }}
+
+{# 9.32b to_camelcase with uppercamel param #}
+TO_CAMEL_UPPER: {{ 'hello_world' | to_camelcase(uppercamel=True) }}
+
+{# 9.33 human_to_bytes (with optional params) #}
+HUMAN_TO_BYTES: {{ '10MB' | human_to_bytes }}
+HUMAN_TO_BYTES_METRIC: {{ '32GB' | human_to_bytes(handle_metric=True) }}
+HUMAN_TO_BYTES_DEFAULT_UNIT: {{ '32' | human_to_bytes(default_unit='GiB') }}
+
+{# ----------------------------------------------------------------------
+  9.34 Networking filters
+---------------------------------------------------------------------- #}
+IS_IP: {{ '192.168.0.1' | is_ip }}
+IS_IPV4: {{ '192.168.0.1' | is_ipv4 }}
+IS_IPV6: {{ '::1' | is_ipv6 }}
+
+IPADDR_IN_NET: {{ '192.168.0.1' | ipaddr('192.168.0.0/24') }}
+IPV4_ONLY: {{ '::1' | ipv4 }}
+IPV6_ONLY: {{ '127.0.0.1' | ipv6 }}
+IPWRAP_V6: {{ '::1' | ipwrap }}
+
+NETWORK_HOSTS: {{ '192.168.0.0/30' | network_hosts | list }}
+NETWORK_SIZE: {{ '192.168.0.0/24' | network_size }}
+
+GEN_MAC: {{ '' | gen_mac }}
+MAC_STR_TO_BYTES: {{ 'AA:BB:CC:DD:EE:FF' | mac_str_to_bytes }}
+DNS_CHECK: {{ 'example.com' | dns_check }}
+
+{# ----------------------------------------------------------------------
+  9.35 File filters
+---------------------------------------------------------------------- #}
+{# NOTE: file system side effects/requirements, keep under if false #}
+{% if false %}
+IS_TEXT_FILE: {{ '/etc/hosts' | is_text_file }}
+IS_BINARY_FILE: {{ '/bin/ls' | is_binary_file }}
+IS_EMPTY_FILE: {{ '/tmp/emptyfile' | is_empty_file }}
+
+FILE_HASHSUM: {{ '/etc/hosts' | file_hashsum }}
+LIST_FILES: {{ '/etc' | list_files | list }}
+
+PATH_JOIN: {{ ['etc', 'salt', 'minion'] | path_join }}
+WHICH: {{ 'bash' | which }}
+{% endif %}
+
+{# ======================================================================
+  10) Salt custom tests + filters in Tests section
+====================================================================== #}
+
+{# 10.1 test: equalto #}
+TEST_EQUALTO_TRUE: {{ 5 is equalto 5 }}
+TEST_EQUALTO_FALSE: {{ 5 is equalto 6 }}
+
+{# 10.2 test: match (regex test) #}
+TEST_MATCH_TRUE: {{ 'a' is match('[a-b]') }}
+TEST_MATCH_FALSE: {{ 'z' is match('[a-b]') }}
+
+{# 10.3 filter: regex_escape #}
+REGEX_ESCAPE: {{ 'https://example.com?foo=bar%20baz' | regex_escape }}
+
+{# 10.4 filter: unique #}
+UNIQUE: {{ ['foo', 'foo', 'bar'] | unique }}
+
+{# ======================================================================
+  11) Salt global functions: ifelse(...)
+====================================================================== #}
+IFELSE_EXAMPLE: {{ ifelse('foo*', 'fooval', 'bar*', 'barval', 'defaultval', minion_id='bar03') }}
+
+{# ======================================================================
+  12) Legacy / backwards-compatible filter aliases
+  These were renamed but still accepted by Salt for compatibility.
+====================================================================== #}
+
+{# rand_str → random_hash (renamed in 2018.3.0) #}
+RAND_STR_LEGACY: {{ 99999999 | rand_str }}
+
+{# str_to_num → to_num (renamed in 2018.3.0) #}
+STR_TO_NUM_LEGACY: {{ '42' | str_to_num }}
+
+{# json_decode_list → json_encode_list (renamed in 2018.3.0; supported until 3003) #}
+JSON_DECODE_LIST_LEGACY: {{ [1, 2, 3] | json_decode_list }}
+
+{# json_decode_dict → json_encode_dict (renamed in 2018.3.0; supported until 3003) #}
+JSON_DECODE_DICT_LEGACY: {{ {'a': 1} | json_decode_dict }}
+
+{# ======================================================================
+  End of file
+====================================================================== #}

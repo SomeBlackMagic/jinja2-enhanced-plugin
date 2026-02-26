@@ -1,0 +1,17 @@
+{# Example 12.1: User profile page #}
+<div class="profile">
+  <h1>{% trans trimmed username=user.display_name %}
+    Profile of {{ username }}
+  {% endtrans %}</h1>
+
+  <p class="member-since">
+    {% trans trimmed date=user.join_date|date %}
+      Member since {{ date }}
+    {% endtrans %}
+  </p>
+
+  <div class="stats">
+    <span>{{ npgettext('user_stats', '%(num)d post', '%(num)d posts', user.post_count) }}</span>
+    <span>{{ npgettext('user_stats', '%(num)d follower', '%(num)d followers', user.follower_count) }}</span>
+  </div>
+</div>

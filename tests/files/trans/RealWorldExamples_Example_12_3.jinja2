@@ -1,0 +1,26 @@
+{# Example 12.3: File manager #}
+<div class="file-list">
+  <h3>{{ pgettext('file_manager', 'Files') }}</h3>
+
+  {% for file in files %}
+    <div class="file-item">
+      <span class="name">{{ file.name }}</span>
+      <span class="size">{{ file.size|filesizeformat }}</span>
+      <span class="modified">
+        {% trans trimmed date=file.modified|date %}
+          Modified: {{ date }}
+        {% endtrans %}
+      </span>
+
+      <div class="actions">
+        <button>{{ pgettext('file_action', 'Open') }}</button>
+        <button>{{ pgettext('file_action', 'Download') }}</button>
+        <button>{{ pgettext('file_action', 'Delete') }}</button>
+      </div>
+    </div>
+  {% endfor %}
+
+  <div class="summary">
+    {{ npgettext('file_manager', '%(num)d file', '%(num)d files', files|length) }}
+  </div>
+</div>
