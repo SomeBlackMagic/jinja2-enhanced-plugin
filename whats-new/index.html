@@ -84,103 +84,164 @@
         Theme: <code id="currentTheme">unknown</code>
     </div>
 
+        <section class="version" data-version="2.2">
+            <h2>Version 2.2.0</h2>
+            <p><strong>Extension Points, Framework Support &amp; Advanced Inspections</strong></p>
+
+            <h3>🔌 New Extension Points</h3>
+            <ul>
+                <li>Added <code>tagBehaviorProvider</code> — register custom Jinja2 tag behaviors (block/inline types, closing tag aliases); includes <code>DefaultJinja2TagBehaviorProvider</code> with built-in tags (<code>trans</code>, <code>autoescape</code>, <code>break</code>, <code>continue</code>, etc.)</li>
+                <li>Added <code>liveTemplateContextProvider</code> — contribute framework-specific live template context types (e.g., Ansible, Django) without IDE restarts</li>
+                <li>Added <code>delimiterProvider</code> — define custom block, variable, and comment delimiters; integrated into lexer, parser, brace matcher, syntax highlighter, and auto-closing handler</li>
+                <li>Added <code>scopeVariableProvider</code> — contribute context-aware variables (e.g., <code>loop.*</code> in <code>{% for %}</code>, <code>caller</code>/<code>varargs</code>/<code>kwargs</code> in <code>{% macro %}</code>); used in completion and undefined-variable inspection</li>
+                <li>Added <code>macroModuleProvider</code> — declare virtual macro modules for framework-specific or runtime-defined macros; integrated into completion and imported macro/variable resolvers</li>
+                <li>Added <code>injectionLanguageProvider</code> — configure dynamic Jinja2 language injection rules (<code>WHEN_DELIMITERS_PRESENT</code>, <code>ALL_STRING_LITERALS</code>, <code>WHOLE_FILE</code>); supports user-defined injection settings</li>
+                <li>Added <code>inspectionRuleProvider</code> — suppress false positives for undefined variables/attributes and unused constructs via whitelist/blacklist patterns with wildcard support</li>
+                <li>Added <code>elementDocumentationProvider</code> — provide rich HTML documentation for filters, tests, functions, variables, macros, blocks, and tags; activates the documentation popup</li>
+                <li>Added <code>typeSchemaProvider</code> — register named type schemas and bind variable names to schema types; drives attribute completion and <code>Jinja2UndefinedAttributeInspection</code></li>
+                <li>Added <code>templateRootProvider</code> — declare framework-specific template root directories; used in template path resolution, completion, and reference lookup</li>
+            </ul>
+
+            <h3>🔍 Inspections</h3>
+            <ul>
+                <li>Added <code>Jinja2UndefinedAttributeInspection</code> — warns on unresolved nested attribute or index access on statically known paths; respects guards (<code>is defined</code>, <code>default</code> filter, <code>if</code> conditions) and ignore annotations</li>
+                <li>Improved <code>Jinja2UndefinedVariableInspection</code> — delegates nested attribute validation to <code>Jinja2UndefinedAttributeInspection</code>, respects scope variable providers and inspection rule providers</li>
+                <li>Improved <code>Jinja2InvalidTagUsageInspection</code> — replaced boolean flags with depth counters for accurate validation inside nested <code>call</code>, <code>macro</code>, and <code>trans</code> blocks</li>
+                <li>Improved <code>Jinja2UnsupportedStatementInspection</code> — added <code>StatementCapabilityPolicy</code> abstraction for loop control extensions; skips inspection inside <code>{% raw %}</code> blocks</li>
+                <li>Improved <code>Jinja2LogicalErrorInspection</code> — extended token recognition and fixed validation of <code>IS NOT</code> constructs</li>
+                <li>Improved <code>Jinja2UnusedConstructsInspection</code> — replaced substring checks with boundary-aware identifier matching utilities</li>
+                <li>Improved <code>Jinja2InvalidInheritanceInspection</code> — detects non-whitespace content before <code>{% extends %}</code></li>
+                <li>Refactored <code>Jinja2DuplicateMacroInspection</code> — switched to <code>PsiElementVisitor</code> with visited-set deduplication</li>
+            </ul>
+
+            <h3>🔗 References &amp; Find Usages</h3>
+            <ul>
+                <li>Added <code>Jinja2FindUsagesHandlerFactory</code> for project-scoped Find Usages on variables, macros, and block definitions</li>
+                <li>Added <code>Jinja2MacroParameterPsi</code> implementing <code>PsiNamedElement</code> — enables Find Usages on macro parameters with correct scope isolation</li>
+                <li>Added <code>Jinja2ImportedMacroResolver</code> and <code>Jinja2ImportedVariableResolver</code> for cross-file macro and variable resolution</li>
+                <li>Added <code>Jinja2ModuleAliasAttributeReference</code> for attribute-based module alias lookups</li>
+                <li>Added <code>Jinja2TemplateFileResolver</code> — multi-step path lookup with filename-index fallback for template resolution</li>
+            </ul>
+
+            <h3>💡 Code Completion</h3>
+            <ul>
+                <li>Added <code>Jinja2LocalDictSchema</code> — resolves inline <code>{% set %}</code> dictionary assignments for attribute and bracket-notation completions</li>
+                <li>Enhanced completion to include scope variables, type schema fields, and template-root-relative path suggestions</li>
+            </ul>
+
+            <h3>⚙️ Parser &amp; Lexer</h3>
+            <ul>
+                <li>Added <code>UnknownTagBlockParser</code> with <code>TagRegistry</code> / <code>DefaultTagRegistry</code> — parses unknown or custom block tags with graceful recovery</li>
+                <li>Added <code>Jinja2DelimiterTransformingLexer</code> for lossless token transformation based on custom delimiters</li>
+                <li>Added <code>Jinja2MacroParameterPsi</code> mapping in <code>Jinja2ParserDefinition</code></li>
+            </ul>
+
+            <h3>🧪 Testing &amp; Reliability</h3>
+            <ul>
+                <li>Added <code>ExpressionAdvancedTest</code> and <code>UnknownStatementBodyTest</code> for complex expression and custom-tag lexer scenarios</li>
+                <li>Added tests for all new extension points, registries, resolvers, and inspections</li>
+                <li>Improved ignore-comment handling with <code>CachedValuesManager</code>-backed rule retrieval and boundary-aware extraction utilities</li>
+            </ul>
+        </section>
+
+
         <section class="version" data-version="2.1">
-        <h2>Version 2.1.1</h2>
-        <p><strong>Parser Refinements, PSI Improvements & Internal Cleanup</strong></p>
+            <h2>Version 2.1.1</h2>
+            <p><strong>Parser Refinements, PSI Improvements & Internal Cleanup</strong></p>
 
-        <h3>Parser &amp; Lexer</h3>
-        <ul>
-            <li>Extended parser and lexer support for advanced Jinja2 constructs</li>
-            <li>Refactored context modifiers handling in parser and lexer for improved correctness</li>
-            <li>Added <code>PARENTHESIZED_EXPRESSION</code> PSI node support in <code>Jinja2ParserDefinition</code> with proper AST generation</li>
-            <li>Revised parsing rules for list, dictionary, and parenthesized expressions in <code>PrimaryExpressionParser</code></li>
-            <li>Improved tokenization of line statement and comment prefixes with configurable spacing and hash counts in <code>Jinja2Lexer.flex</code></li>
-            <li>Added <code>getLanguage</code> override in <code>Jinja2CodeStyleSettingsProvider</code> for correct language binding</li>
-        </ul>
+            <h3>Parser &amp; Lexer</h3>
+            <ul>
+                <li>Extended parser and lexer support for advanced Jinja2 constructs</li>
+                <li>Refactored context modifiers handling in parser and lexer for improved correctness</li>
+                <li>Added <code>PARENTHESIZED_EXPRESSION</code> PSI node support in <code>Jinja2ParserDefinition</code> with proper AST generation</li>
+                <li>Revised parsing rules for list, dictionary, and parenthesized expressions in <code>PrimaryExpressionParser</code></li>
+                <li>Improved tokenization of line statement and comment prefixes with configurable spacing and hash counts in <code>Jinja2Lexer.flex</code></li>
+                <li>Added <code>getLanguage</code> override in <code>Jinja2CodeStyleSettingsProvider</code> for correct language binding</li>
+            </ul>
 
-        <h3>Editor &amp; Formatting</h3>
-        <ul>
-            <li>Enhanced syntax highlight rules for Jinja2 constructs</li>
-            <li>Improved formatter behaviour with additional test coverage for edge cases</li>
-        </ul>
+            <h3>Editor &amp; Formatting</h3>
+            <ul>
+                <li>Enhanced syntax highlight rules for Jinja2 constructs</li>
+                <li>Improved formatter behaviour with additional test coverage for edge cases</li>
+            </ul>
 
-        <h3>Testing &amp; Reliability</h3>
-        <ul>
-            <li>Added <code>LineSyntaxTest</code> for tokenization of line statements and comments</li>
-            <li>Added <code>Jinja2MacrosNegativeParserTest</code> for invalid macro syntax validation</li>
-            <li>Added raw block lexer tests covering edge cases (keyword prefix in identifiers, endraw suffix)</li>
-            <li>Added lexer and parser tests for compact collection literals with whitespace controls</li>
-            <li>Migrated raw block lexer tests to in-method snapshots for better maintainability</li>
-            <li>Restructured <code>tests/testData</code> into language-specific subfolders (<code>lang/parser</code>, <code>lang/lexer</code>, <code>lang/psi</code>)</li>
-            <li>Relocated macro negative test files to a dedicated <code>negative</code> folder</li>
-            <li>Removed outdated base test classes and legacy PSI test stubs</li>
-        </ul>
+            <h3>Testing &amp; Reliability</h3>
+            <ul>
+                <li>Added <code>LineSyntaxTest</code> for tokenization of line statements and comments</li>
+                <li>Added <code>Jinja2MacrosNegativeParserTest</code> for invalid macro syntax validation</li>
+                <li>Added raw block lexer tests covering edge cases (keyword prefix in identifiers, endraw suffix)</li>
+                <li>Added lexer and parser tests for compact collection literals with whitespace controls</li>
+                <li>Migrated raw block lexer tests to in-method snapshots for better maintainability</li>
+                <li>Restructured <code>tests/testData</code> into language-specific subfolders (<code>lang/parser</code>, <code>lang/lexer</code>, <code>lang/psi</code>)</li>
+                <li>Relocated macro negative test files to a dedicated <code>negative</code> folder</li>
+                <li>Removed outdated base test classes and legacy PSI test stubs</li>
+            </ul>
 
-        <h2>Version 2.1.0</h2>
-        <p><strong>Code Intelligence, Editor Productivity & Refactoring Foundations</strong></p>
+            <h2>Version 2.1.0</h2>
+            <p><strong>Code Intelligence, Editor Productivity & Refactoring Foundations</strong></p>
 
-        <h3>🧠 Code Completion</h3>
-        <ul>
-            <li>New <code>Jinja2CompletionContributor</code> providing context-aware completions for tags, filters, tests, and variables</li>
-            <li>Smart completion context resolution via <code>Jinja2CompletionContextResolver</code> — correctly distinguishes <code>TAG_KEYWORD</code>, <code>FILTER</code>, <code>TEST</code>, <code>VARIABLE</code>, and <code>UNKNOWN</code> contexts</li>
-            <li>Nested variable member completions with support for both dot (<code>foo.bar</code>) and bracket (<code>foo["bar"]</code>) notation, including multi-level nesting</li>
-            <li>Built-in variable, filter, and test descriptors provided by <code>DefaultJinja2VariableProvider</code>, <code>DefaultJinja2FilterProvider</code>, and <code>DefaultJinja2TestProvider</code></li>
-            <li>Built-in global function descriptors via <code>DefaultJinja2FunctionProvider</code></li>
-            <li>New <code>variableProvider</code> extension point — third-party plugins can now contribute custom variable, filter, and test completions</li>
-            <li>Lookup items with type annotations and descriptions via <code>Jinja2LookupElementFactory</code></li>
-        </ul>
+            <h3>🧠 Code Completion</h3>
+            <ul>
+                <li>New <code>Jinja2CompletionContributor</code> providing context-aware completions for tags, filters, tests, and variables</li>
+                <li>Smart completion context resolution via <code>Jinja2CompletionContextResolver</code> — correctly distinguishes <code>TAG_KEYWORD</code>, <code>FILTER</code>, <code>TEST</code>, <code>VARIABLE</code>, and <code>UNKNOWN</code> contexts</li>
+                <li>Nested variable member completions with support for both dot (<code>foo.bar</code>) and bracket (<code>foo["bar"]</code>) notation, including multi-level nesting</li>
+                <li>Built-in variable, filter, and test descriptors provided by <code>DefaultJinja2VariableProvider</code>, <code>DefaultJinja2FilterProvider</code>, and <code>DefaultJinja2TestProvider</code></li>
+                <li>Built-in global function descriptors via <code>DefaultJinja2FunctionProvider</code></li>
+                <li>New <code>variableProvider</code> extension point — third-party plugins can now contribute custom variable, filter, and test completions</li>
+                <li>Lookup items with type annotations and descriptions via <code>Jinja2LookupElementFactory</code></li>
+            </ul>
 
-        <h3>⌨️ Editor Typing Experience</h3>
-        <ul>
-            <li>New <code>Jinja2TypedHandler</code> — automatically inserts closing delimiters (<code>%}</code>, <code>}}</code>, <code>#}</code>) when typing their opening pairs</li>
-            <li>Smart handling of already-closed delimiters to avoid duplication</li>
-            <li>Correct behavior for unmatched or partial opening braces</li>
-        </ul>
+            <h3>⌨️ Editor Typing Experience</h3>
+            <ul>
+                <li>New <code>Jinja2TypedHandler</code> — automatically inserts closing delimiters (<code>%}</code>, <code>}}</code>, <code>#}</code>) when typing their opening pairs</li>
+                <li>Smart handling of already-closed delimiters to avoid duplication</li>
+                <li>Correct behavior for unmatched or partial opening braces</li>
+            </ul>
 
-        <h3>🎨 Syntax & Rainbow Highlighting</h3>
-        <ul>
-            <li>Rainbow block delimiter highlighting via <code>Jinja2BlockRainbowAnnotator</code> and <code>Jinja2BracketsRainbowAnnotator</code></li>
-            <li>Expression-level rainbow highlighting via <code>Jinja2ExpressionsRainbowAnnotator</code></li>
-            <li>New rainbow level color keys (<code>RAINBOW_L0</code>–<code>RAINBOW_L4</code>) in <code>Jinja2SyntaxHighlighter</code>, configurable in the Color Settings page</li>
-            <li>Updated <em>Default</em> and <em>Darcula</em> color schemes with rainbow-level styling</li>
-            <li>New <code>Jinja2SemanticHighlightingAnnotator</code> for contextual semantic coloring</li>
-        </ul>
+            <h3>🎨 Syntax & Rainbow Highlighting</h3>
+            <ul>
+                <li>Rainbow block delimiter highlighting via <code>Jinja2BlockRainbowAnnotator</code> and <code>Jinja2BracketsRainbowAnnotator</code></li>
+                <li>Expression-level rainbow highlighting via <code>Jinja2ExpressionsRainbowAnnotator</code></li>
+                <li>New rainbow level color keys (<code>RAINBOW_L0</code>–<code>RAINBOW_L4</code>) in <code>Jinja2SyntaxHighlighter</code>, configurable in the Color Settings page</li>
+                <li>Updated <em>Default</em> and <em>Darcula</em> color schemes with rainbow-level styling</li>
+                <li>New <code>Jinja2SemanticHighlightingAnnotator</code> for contextual semantic coloring</li>
+            </ul>
 
-        <h3>🧩 Code Navigation</h3>
-        <ul>
-            <li>New <code>Jinja2CodeBlockSupportHandler</code> enables code block navigation and marker highlighting for <code>{% for %}…{% endfor %}</code>, <code>{% if %}…{% endif %}</code>, and other paired constructs</li>
-            <li>Accurate range calculation for nested blocks and incomplete block pairs</li>
-        </ul>
+            <h3>🧩 Code Navigation</h3>
+            <ul>
+                <li>New <code>Jinja2CodeBlockSupportHandler</code> enables code block navigation and marker highlighting for <code>{% for %}…{% endfor %}</code>, <code>{% if %}…{% endif %}</code>, and other paired constructs</li>
+                <li>Accurate range calculation for nested blocks and incomplete block pairs</li>
+            </ul>
 
-        <h3>✏️ Commenting</h3>
-        <ul>
-            <li>New <code>Jinja2Commenter</code> with full line and block comment support using Jinja2's <code>{# … #}</code> syntax</li>
-            <li>Toggle line/block comment works correctly with multi-line selections and nested constructs</li>
-        </ul>
+            <h3>✏️ Commenting</h3>
+            <ul>
+                <li>New <code>Jinja2Commenter</code> with full line and block comment support using Jinja2's <code>{# … #}</code> syntax</li>
+                <li>Toggle line/block comment works correctly with multi-line selections and nested constructs</li>
+            </ul>
 
-        <h3>🔤 Spellchecking</h3>
-        <ul>
-            <li>New <code>Jinja2SpellcheckingStrategy</code> integrates IDE spellchecking into Jinja2 template files</li>
-        </ul>
+            <h3>🔤 Spellchecking</h3>
+            <ul>
+                <li>New <code>Jinja2SpellcheckingStrategy</code> integrates IDE spellchecking into Jinja2 template files</li>
+            </ul>
 
-        <h3>🗺️ Breadcrumbs</h3>
-        <ul>
-            <li>New <code>Jinja2BreadcrumbsProvider</code> adds breadcrumb navigation in the editor gutter for nested template structures</li>
-        </ul>
+            <h3>🗺️ Breadcrumbs</h3>
+            <ul>
+                <li>New <code>Jinja2BreadcrumbsProvider</code> adds breadcrumb navigation in the editor gutter for nested template structures</li>
+            </ul>
 
-        <h3>🎛️ Code Style & Formatting</h3>
-        <ul>
-            <li>Added <code>Jinja2ColorSettingsPage</code> for full syntax color customization</li>
-            <li>New <code>Jinja2FormattingModelBuilder</code>, <code>Jinja2LanguageCodeStyleSettingsProvider</code>, and <code>Jinja2CodeStyleSettingsProvider</code> for configurable code formatting</li>
-            <li>Improved block and macro body alignment in the formatter</li>
-        </ul>
+            <h3>🎛️ Code Style & Formatting</h3>
+            <ul>
+                <li>Added <code>Jinja2ColorSettingsPage</code> for full syntax color customization</li>
+                <li>New <code>Jinja2FormattingModelBuilder</code>, <code>Jinja2LanguageCodeStyleSettingsProvider</code>, and <code>Jinja2CodeStyleSettingsProvider</code> for configurable code formatting</li>
+                <li>Improved block and macro body alignment in the formatter</li>
+            </ul>
 
-        <h3>🧪 Testing & Reliability</h3>
-        <ul>
-            <li>Extensive new test coverage for all v2.1 features: completion, context resolution, typed handler, rainbow annotators, code block handler, commenter, breadcrumbs, PSI helpers, and descriptors</li>
-            <li>New <code>Jinja2MacroDefinitionPsi#getParameterNames()</code> and <code>Jinja2SetStatementPsi#getAssignedVariableNames()</code> helper methods with full test coverage</li>
-            <li><code>Jinja2ElementFactory</code> added to simplify PSI element creation in tests and runtime code</li>
-        </ul>
+            <h3>🧪 Testing & Reliability</h3>
+            <ul>
+                <li>Extensive new test coverage for all v2.1 features: completion, context resolution, typed handler, rainbow annotators, code block handler, commenter, breadcrumbs, PSI helpers, and descriptors</li>
+                <li>New <code>Jinja2MacroDefinitionPsi#getParameterNames()</code> and <code>Jinja2SetStatementPsi#getAssignedVariableNames()</code> helper methods with full test coverage</li>
+                <li><code>Jinja2ElementFactory</code> added to simplify PSI element creation in tests and runtime code</li>
+            </ul>
         </section>
     
     <!-- ===================== -->
