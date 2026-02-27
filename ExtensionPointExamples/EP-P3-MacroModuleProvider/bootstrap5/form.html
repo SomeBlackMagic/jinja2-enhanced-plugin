@@ -1,0 +1,12 @@
+{% macro render_field(field) %}
+  <div class="mb-3">
+    <label class="form-label">{{ field.label }}</label>
+    {{ field(class="form-control") }}
+  </div>
+{% endmacro %}
+
+{% macro local_only_macro(value) %}
+  <span class="text-muted">{{ value }}</span>
+{% endmacro %}
+
+{% set local_theme = "bootstrap5" %}

@@ -1,0 +1,6 @@
+# Open this file in IDE with both plugins enabled.
+# Place caret inside "{{ ... }}" and run Live Templates (Ctrl+J).
+- name: Render debug message
+  debug:
+    msg: "Host is {{ inventory_hostname }}"
+

@@ -1,0 +1,9 @@
+{% for item in items %}
+  {% if item.skip %}
+    {% continue %}
+  {% endif %}
+  {{ item.name }}
+  {% if item.stop %}
+    {% break %}
+  {% endif %}
+{% endfor %}

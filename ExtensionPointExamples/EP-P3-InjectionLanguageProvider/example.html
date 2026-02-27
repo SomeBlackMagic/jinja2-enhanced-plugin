@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Jinja2 Injection HTML Example</title>
+</head>
+<body>
+    <!-- This expression should be injected and highlighted as Jinja2. -->
+    <h1>Hello {{ user.name }}</h1>
+
+    <!-- Statement block should also be highlighted. -->
+    {% if user.is_admin %}
+    <p>Admin mode enabled</p>
+    {% endif %}
+</body>
+</html>

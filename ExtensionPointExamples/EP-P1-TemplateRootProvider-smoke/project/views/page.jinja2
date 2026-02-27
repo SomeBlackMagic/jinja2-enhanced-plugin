@@ -1,0 +1,7 @@
+{% extends "" %}
+
+{% extends "base.html" %}
+{% include "partials/header.html" %}
+{% import "macros/forms.jinja2" as forms %}
+{% import "templates/macros/forms.jinja2" as forms_legacy %}
+{{ forms.input("email") }}

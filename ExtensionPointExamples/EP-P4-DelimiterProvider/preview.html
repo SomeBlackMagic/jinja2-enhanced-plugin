@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>DelimiterProvider Preview</title>
+</head>
+<body>
+  <h1>Custom Delimiter Preview</h1>
+
+  <p>These lines should be recognized only when delimiter provider applies:</p>
+  <pre>
+[% if feature_enabled %]
+  User: [[ user.name ]]
+[% endif %]
+  </pre>
+
+  <p>Standard Jinja snippet for comparison:</p>
+  <pre>
+{% if feature_enabled %}
+  User: {{ user.name }}
+{% endif %}
+  </pre>
+</body>
+</html>

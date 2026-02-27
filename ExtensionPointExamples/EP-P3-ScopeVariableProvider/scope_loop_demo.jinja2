@@ -1,0 +1,13 @@
+{# Scope variable demo for for-loop context #}
+{% set users = [{'name': 'Alice'}, {'name': 'Bob'}] %}
+
+<ul>
+{% for user in users %}
+  <li data-index="{{ loop.index0 }}">
+    {{ loop.index }}. {{ user.name }}
+  </li>
+
+  {# Expected inspection warning: Undefined attribute: loop.unknown_attr #}
+  {{ loop.unknown_attr }}
+{% endfor %}
+</ul>

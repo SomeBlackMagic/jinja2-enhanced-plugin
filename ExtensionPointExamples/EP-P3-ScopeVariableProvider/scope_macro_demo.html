@@ -1,0 +1,19 @@
+{# Scope variable demo for macro context #}
+{% macro dialog(title) %}
+<section class="dialog">
+  <h2>{{ title }}</h2>
+  <div class="body">
+    {{ caller() }}
+  </div>
+  <footer>
+    {{ varargs }} | {{ kwargs }}
+  </footer>
+</section>
+{% endmacro %}
+
+{% call dialog('Demo') %}
+  <p>Body from call block</p>
+{% endcall %}
+
+{# Outside macro: caller/varargs/kwargs should not be suggested #}
+<div>{{ title }}</div>

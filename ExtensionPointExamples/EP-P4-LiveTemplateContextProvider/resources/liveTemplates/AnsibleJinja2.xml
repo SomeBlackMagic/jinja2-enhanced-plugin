@@ -1,0 +1,14 @@
+<templateSet group="Ansible Jinja2">
+    <template name="aitem" value="{{ item }}" description="Current loop item">
+        <context>
+            <option name="JINJA2_ANSIBLE_TASK" value="true"/>
+        </context>
+    </template>
+
+    <template name="afacts" value="{{ ansible_facts.$FIELD$ }}" description="Ansible fact field">
+        <variable name="FIELD" defaultValue="os_family" alwaysStopAt="true"/>
+        <context>
+            <option name="JINJA2_ANSIBLE_TASK" value="true"/>
+        </context>
+    </template>
+</templateSet>

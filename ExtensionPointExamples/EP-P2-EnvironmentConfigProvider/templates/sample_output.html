@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>EnvironmentConfigProvider Example</title>
+</head>
+<body>
+  <main>
+    <section>
+      <h2>Strict Undefined</h2>
+      <p>{{ missing_user.name }}</p>
+    </section>
+
+    <section>
+      <h2>Loop Controls</h2>
+      {% for item in items %}
+        {% if item.skip %}{% continue %}{% endif %}
+        <p>{{ item.name }}</p>
+        {% if item.stop %}{% break %}{% endif %}
+      {% endfor %}
+    </section>
+
+    <section>
+      <h2>i18n Block</h2>
+      {% trans %}
+      Welcome
+      {% endtrans %}
+    </section>
+  </main>
+</body>
+</html>

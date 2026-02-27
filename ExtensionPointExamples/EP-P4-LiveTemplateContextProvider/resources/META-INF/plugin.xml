@@ -1,0 +1,17 @@
+<idea-plugin>
+    <id>org.example.ansible-support</id>
+    <name>Example Ansible Support</name>
+    <vendor>Example</vendor>
+
+    <depends>com.intellij.modules.platform</depends>
+    <depends>com.jinja2enhanced</depends>
+
+    <extensions defaultExtensionNs="com.jinja2enhanced">
+        <liveTemplateContextProvider implementation="org.example.ansible.AnsibleLiveTemplateContextProvider"/>
+    </extensions>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <liveTemplateContext implementation="org.example.ansible.AnsibleTaskTemplateContextType"/>
+        <defaultLiveTemplates file="/liveTemplates/AnsibleJinja2.xml"/>
+    </extensions>
+</idea-plugin>

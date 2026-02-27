@@ -1,0 +1,5 @@
+# This value should be detected by delimiter-based injection mode.
+name: "{{ inventory_hostname }}"
+
+# Block statements in YAML strings should also be handled.
+message: "{% if enabled %}on{% else %}off{% endif %}"

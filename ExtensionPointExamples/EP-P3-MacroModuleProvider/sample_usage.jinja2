@@ -1,0 +1,19 @@
+{% from "bootstrap5/form.html" import render_field, render_form, theme %}
+{% import "bootstrap5/form.html" as forms %}
+
+<section class="demo">
+  <h2>Macro Module Provider Demo</h2>
+  <p>Theme: {{ theme }}</p>
+
+  <div class="field-row">
+    {{ render_field(user_form.username) }}
+  </div>
+
+  <div class="field-row">
+    {{ forms.render_vform(user_form) }}
+  </div>
+
+  <div class="field-row">
+    {{ forms.render_form(user_form) }}
+  </div>
+</section>
