@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Jinja2 Documentation Provider Demo</title>
+</head>
+<body>
+  <h1>Documentation Provider Demo</h1>
+
+  <!-- Put caret on "to_json" and press Ctrl+Q. -->
+  <pre>{{ user | to_json }}</pre>
+
+  <!-- Put caret on "upper" and press Ctrl+Q. -->
+  <pre>{{ user.name | upper }}</pre>
+
+  <!-- Put caret on "defined" and press Ctrl+Q. -->
+  {% if user.email is defined %}
+    <pre>{{ user.email }}</pre>
+  {% endif %}
+
+  <!-- Put caret on "unknown_filter" and press Ctrl+Q. -->
+  <pre>{{ user | unknown_filter }}</pre>
+</body>
+</html>

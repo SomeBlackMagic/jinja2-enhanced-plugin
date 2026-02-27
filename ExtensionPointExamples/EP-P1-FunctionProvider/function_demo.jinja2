@@ -1,0 +1,17 @@
+{# Function Provider Demo #}
+{# Custom global functions contributed via functionProvider appear in expression completion #}
+
+{# url_for: generates a URL from an endpoint name (e.g. Flask) #}
+<a href="{{ url_for('profile', user_id=user.id) }}">My profile</a>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+{# get_flashed_messages: retrieves messages queued for display #}
+{% for message in get_flashed_messages(with_categories=true) %}
+  <div class="alert alert-{{ message[0] }}">{{ message[1] }}</div>
+{% endfor %}
+
+{# csrf_token: injects a CSRF token into a form #}
+<form method="post">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <button type="submit">Submit</button>
+</form>

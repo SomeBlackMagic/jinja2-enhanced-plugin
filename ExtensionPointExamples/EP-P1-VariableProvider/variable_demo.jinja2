@@ -1,0 +1,20 @@
+{# Variable Provider Demo #}
+{# Custom global variables contributed via variableProvider should appear in completion #}
+
+{# app: framework application object with child fields #}
+<title>{{ app.name }} v{{ app.version }}</title>
+
+{% if app.debug %}
+  <div class="debug-banner">Debug mode is ON</div>
+{% endif %}
+
+{# g: per-request global proxy (e.g. Flask's flask.g) #}
+{% if g.current_user %}
+  <p>Welcome, {{ g.current_user.name }}</p>
+{% endif %}
+
+{# config: application configuration mapping #}
+<meta name="env" content="{{ config.ENV }}">
+
+{# Variables should not produce "undefined variable" warnings in inspections #}
+<p>Items per page: {{ config.ITEMS_PER_PAGE }}</p>

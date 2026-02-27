@@ -16,4 +16,5 @@
 {% macro internal_state() -%}
   {% set hidden_in_macro = "secret" %}
   {{ hidden_in_macro }}
+  {{ api_host }}
 {%- endmacro %}

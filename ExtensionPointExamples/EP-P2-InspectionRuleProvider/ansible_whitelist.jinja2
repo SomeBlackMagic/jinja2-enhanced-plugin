@@ -1,0 +1,10 @@
+{# Step 1: put "ansible_*" into settings whitelist patterns. #}
+{# Step 2: run inspections in this file. #}
+
+<p>OS family: {{ ansible_facts.os_family }}</p>
+<p>Undefined on purpose: {{ missing_custom }}</p>
+
+{# Expected:
+   - "ansible_facts" should be suppressed by wildcard pattern.
+   - "missing_custom" should still be reported as undefined variable.
+#}

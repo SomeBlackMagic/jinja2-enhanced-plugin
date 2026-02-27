@@ -1,0 +1,16 @@
+{% set name = "outer_name" %}
+{% set title = "outer_title" %}
+
+{% macro greet(name, title='Mx') %}
+Greeting: {{ title }} {{ name }}
+Repeated usage: {{ name }}
+{% endmacro %}
+
+{% macro wrapper(name) %}
+Wrapper usage: {{ name }}
+{% endmacro %}
+
+{{ greet("Alice") }}
+{{ wrapper("Bob") }}
+
+Outside usage (must resolve to outer set variable): {{ name }} {{ title }}

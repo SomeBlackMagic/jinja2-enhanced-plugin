@@ -1,0 +1,36 @@
+{# Manual verification sample for Find Usages behavior in runIde. #}
+{# Expected: declaration-site variables (ASSIGNMENT_TARGET) do not expose PsiReference. #}
+{# Expected: usage-site variables resolve to declarations and are found by Find Usages. #}
+
+{# 1) SET declaration and usages #}
+{% set user = "Alice" %}
+{{ user }}
+{% set copy = user %}
+{{ user|upper }}
+
+{# 2) FOR declaration and usages #}
+{% for item in items %}
+  {{ item }}
+{% endfor %}
+{{ items|length }}
+
+{# 3) Tuple SET declaration and usages #}
+{% set a, b = pair %}
+{{ a }}
+{{ b }}
+{% set sum_text = a ~ ":" ~ b %}
+
+{# 4) Same-name declaration and RHS usage in one statement #}
+{% set x = 1 %}
+{% set x = x + 1 %}
+{{ x }}
+
+{# Manual checks in runIde:
+  - Find Usages on declaration identifier in `{% set user = ... %}`:
+    declaration itself should be treated as declaration, not as a reference usage.
+  - Find Usages on declaration identifier in `{% for item in items %}`:
+    same expectation as above.
+  - Ctrl+Click / Go to Declaration from `{{ user }}`, `{{ item }}`, `{{ a }}`, `{{ b }}`:
+    should navigate to corresponding declaration.
+  - Find Usages for `user`, `item`, `a`, `b`, `x` should include usage sites in expressions.
+#}

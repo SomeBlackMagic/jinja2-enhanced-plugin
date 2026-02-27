@@ -1,0 +1,16 @@
+{# Filter Provider Demo #}
+{# Custom filters contributed via filterProvider should appear in completion after | #}
+
+{# slugify: converts a title to a URL-safe slug #}
+<a href="/posts/{{ post.title | slugify }}">{{ post.title }}</a>
+
+{# to_yaml: serializes a value as YAML (e.g. for config output or API debugging) #}
+<pre>{{ config | to_yaml }}</pre>
+
+{# highlight: syntax-highlights a code block #}
+<div class="code-block">
+  {{ snippet.code | highlight }}
+</div>
+
+{# Chaining custom and built-in filters is supported #}
+<p>{{ post.title | slugify | upper }}</p>

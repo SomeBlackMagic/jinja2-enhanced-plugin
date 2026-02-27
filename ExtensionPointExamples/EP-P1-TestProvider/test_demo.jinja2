@@ -1,0 +1,24 @@
+{# Test Provider Demo #}
+{# Custom tests contributed via testProvider should appear in completion after "is" #}
+
+{# email: checks whether a string is a valid e-mail address #}
+{% if user.contact is email %}
+  <a href="mailto:{{ user.contact }}">{{ user.contact }}</a>
+{% else %}
+  <span>{{ user.contact }}</span>
+{% endif %}
+
+{# url: checks whether a string is a valid URL #}
+{% if resource.link is url %}
+  <a href="{{ resource.link }}" target="_blank">{{ resource.link }}</a>
+{% endif %}
+
+{# uuid: validates a UUID-formatted identifier #}
+{% if item.id is uuid %}
+  <span class="uuid-badge">{{ item.id }}</span>
+{% endif %}
+
+{# Negated form is also supported #}
+{% if user.contact is not email %}
+  <p class="warning">Invalid contact information.</p>
+{% endif %}

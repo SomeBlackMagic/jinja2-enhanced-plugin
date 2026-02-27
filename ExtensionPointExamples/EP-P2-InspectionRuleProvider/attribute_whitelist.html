@@ -1,0 +1,9 @@
+{% set data = {} %}
+
+<div>Suppressed by provider: {{ data.safe_attr }}</div>
+<div>Still reported: {{ data.risky_attr }}</div>
+
+{# Expected with provider rule undefinedAttributeWhitelist=["safe_attr"]:
+   - No warning for data.safe_attr
+   - Warning for data.risky_attr
+#}

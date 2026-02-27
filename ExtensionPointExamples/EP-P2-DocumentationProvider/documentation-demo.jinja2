@@ -1,0 +1,13 @@
+{# Place caret on "to_json" and press Ctrl+Q. #}
+{{ user | to_json }}
+
+{# Place caret on "upper" and press Ctrl+Q. #}
+{{ user.name | upper }}
+
+{# Place caret on "defined" and press Ctrl+Q. #}
+{% if user.email is defined %}
+  {{ user.email }}
+{% endif %}
+
+{# Place caret on "unknown_filter" and press Ctrl+Q. #}
+{{ user | unknown_filter }}

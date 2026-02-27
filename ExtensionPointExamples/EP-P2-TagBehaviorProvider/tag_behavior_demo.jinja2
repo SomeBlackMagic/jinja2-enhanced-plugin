@@ -1,0 +1,27 @@
+{# Tag Behavior Provider Demo #}
+{# Custom tags contributed via tagBehaviorProvider are recognized by the parser #}
+
+{# cache: block tag — wraps content that should be cached for `timeout` seconds #}
+{% cache 300 %}
+  <section class="expensive-render">
+    {% for item in items %}
+      <div>{{ item.name }}</div>
+    {% endfor %}
+  </section>
+{% endcache %}
+
+{# compress: block tag — bundles and minifies CSS/JS assets #}
+{% compress 'css' %}
+  <link rel="stylesheet" href="/static/base.css">
+  <link rel="stylesheet" href="/static/theme.css">
+{% endcompress %}
+
+{# cache_bust: inline tag — inserts a cache-busting query parameter #}
+<script src="/static/app.js?v={% cache_bust %}"></script>
+
+{# Nesting block tags is supported #}
+{% cache 60 %}
+  {% compress 'js' %}
+    <script src="/static/vendor.js"></script>
+  {% endcompress %}
+{% endcache %}
