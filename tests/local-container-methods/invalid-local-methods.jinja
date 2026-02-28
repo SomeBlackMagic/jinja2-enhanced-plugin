@@ -1,0 +1,8 @@
+{# mutate(...) should be reported as an unknown dict method. #}
+{# server1() should be reported as not callable after update propagation. #}
+{% set item1 = {"server1": "1.1.1.1"} %}
+{% set all_servers = {} %}
+
+{% do all_servers.mutate(item1) %}
+{% do all_servers.update(item1) %}
+{% do all_servers.server1() %}

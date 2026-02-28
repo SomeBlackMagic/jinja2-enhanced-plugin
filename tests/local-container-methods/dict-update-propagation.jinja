@@ -1,0 +1,8 @@
+{# 1. update(...) should be recognized as a valid dict method. #}
+{# 2. Open completion inside all_servers[""] after the update call. #}
+{% set item1 = {"site1": "1.1.1.1", "site2": "1.1.1.2"} %}
+{% set all_servers = {} %}
+
+{% do all_servers.update(item1) %}
+
+{{ all_servers[""] }}
