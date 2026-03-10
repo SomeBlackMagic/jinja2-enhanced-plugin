@@ -83,6 +83,72 @@
         Version: <code id="currentVersion">unknown</code> ·
         Theme: <code id="currentTheme">unknown</code>
     </div>
+        <section class="version" data-version="2.3">
+            <h2>Version 2.3.0</h2>
+            <p><strong>Assignment Tags, Type System &amp; Navigation Enhancements</strong></p>
+
+            <h3>🔌 New Extension Point</h3>
+            <ul>
+                <li>Added <code>assignmentTagProvider</code> — register custom tags that bind variables via <code>as</code> keyword; includes <code>Jinja2AssignmentTagDescriptor</code>, <code>Jinja2AssignmentTagProvider</code>, <code>Jinja2AssignmentTagRegistry</code>, and built-in <code>Jinja2AssignmentTagScopeVariableProvider</code> exposing bound variables in scope for completion and inspections (enables framework integrations such as Ansible)</li>
+            </ul>
+
+            <h3>🔗 References &amp; Find Usages</h3>
+            <ul>
+                <li>Added <code>Jinja2BlockReference</code> — Ctrl+Click navigation for <code>{% block %}</code> names through template inheritance chains with cycle-safe parent traversal</li>
+                <li>Added autocompletion for inherited block names in child templates</li>
+                <li>Added Find Usages support for variables bound via assignment tags (<code>as</code> keyword) through <code>Jinja2AssignmentTagBindingPsi</code></li>
+                <li>Added Find Usages and nested attribute resolution for assignment tag variables; restricted search scope to Jinja2 files</li>
+            </ul>
+
+            <h3>💡 Code Completion</h3>
+            <ul>
+                <li>Enhanced <code>Jinja2CompletionContributor</code> with nested member completion for assignment tag variables (e.g., <code>mysql.host</code>, <code>mysql.port</code>)</li>
+                <li>Added <code>resolveChildBySegment</code> for dotted and bracket-notation key resolution in nested attribute completions</li>
+            </ul>
+
+            <h3>📖 Documentation</h3>
+            <ul>
+                <li>Added <code>Jinja2AssignmentTagVariableDocumentation</code> — Ctrl+Q hover documentation for assignment tag keywords and their bound variables</li>
+            </ul>
+
+            <h3>⚙️ Parser &amp; Lexer</h3>
+            <ul>
+                <li>Added tuple unpacking in <code>{% for %}</code> loops — supports parenthesized and plain forms: <code>{% for a, b, c in seq %}</code>, <code>{% for (a, b) in seq %}</code></li>
+                <li>Added support for post-filter binary operators in inline-if conditions: <code>{% if value|lower in ["a", "b"] %}</code>, <code>{% if value|lower == "x" %}</code></li>
+                <li>Added nested single-block statements in control-flow bodies — <code>import</code>, <code>from-import</code>, <code>set</code>, <code>include</code> now parse correctly inside <code>{% if %}</code> and <code>{% for %}</code> blocks</li>
+                <li>Added inline assignment tag resolution inside conditional blocks</li>
+                <li>Refactored <code>StatementDispatcher</code> — introduced <code>parseStatementBody()</code> for keyword-first dispatch of single-block statements</li>
+            </ul>
+
+            <h3>🔍 Inspections</h3>
+            <ul>
+                <li>Improved <code>Jinja2UndefinedAttributeInspection</code> — early exit for provider variables with no known children, eliminating false positives</li>
+                <li>Added <code>Jinja2DoMethodCallInspection</code> — validates schema-backed methods used in <code>{% do %}</code> expressions; detects missing methods, non-callable fields, and improper side-effect-free expressions</li>
+            </ul>
+
+            <h3>🧩 Type System</h3>
+            <ul>
+                <li>Introduced <code>Jinja2BuiltInTypeRegistry</code> — defines schemas for built-in Python types (<code>dict</code>, <code>list</code>) with method completion support</li>
+                <li>Added <code>Jinja2TypeParam</code> and <code>Jinja2TypeMemberAccessPath</code> for modeling parameterized type fields and static member access paths</li>
+                <li>Added <code>Jinja2LocalTypeResolver</code> for inferring and resolving locally scoped types</li>
+            </ul>
+
+            <h3>⚙️ Configuration</h3>
+            <ul>
+                <li>Overhauled Jinja2 API configuration: replaced <code>Jinja2DelimiterProvider</code> / <code>Jinja2EnvironmentConfigProvider</code> with <code>Jinja2ApiConfigOverride</code> (patch-style builder) and <code>Jinja2ApiConfigProvider</code>; <code>Jinja2ApiConfigRegistry</code> merges default settings with provider overrides</li>
+                <li>Added <code>Jinja2UndefinedBehavior</code> and <code>Jinja2AutoescapeMode</code> enums; introduced <code>Jinja2SyntaxOptions</code> record for immutable line-prefix syntax configuration</li>
+                <li>Added <code>Jinja2ApiSettingsConfigurable</code> and <code>Jinja2ApiSettingsPanel</code> — Settings UI with validation for delimiters, line prefixes, and extensions</li>
+            </ul>
+
+            <h3>🏗️ Infrastructure</h3>
+            <ul>
+                <li>Migrated to IntelliJ Platform Plugin 2.x (<code>org.jetbrains.intellij.platform</code> 2.2.0); updated <code>sinceBuild</code> to <code>241</code> (IntelliJ 2024.1)</li>
+                <li>Improved variable resolution in multi-host injected contexts via <code>collectVisibleVariablesFromInjectedHostContext</code> in <code>Jinja2ScopeUtil</code></li>
+                <li>Replaced deprecated IntelliJ Platform API usages across inspections, registries, and notification providers</li>
+                <li>Replaced custom <code>SecondaryJinjaHostLanguage</code> logic with <code>PlainTextLanguage</code> in multi-host injection tests</li>
+            </ul>
+        </section>
+
 
         <section class="version" data-version="2.2">
             <h2>Version 2.2.0</h2>
