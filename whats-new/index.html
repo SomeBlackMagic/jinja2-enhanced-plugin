@@ -84,6 +84,55 @@
         Theme: <code id="currentTheme">unknown</code>
     </div>
         <section class="version" data-version="2.3">
+            <h2>Version 2.3.1</h2>
+            <p><strong>Secondary PSI Completion, Variable-Key Resolution, Parser Stability &amp; IDE UX Improvements</strong></p>
+
+            <h3>💡 Code Completion &amp; Resolution</h3>
+            <ul>
+                <li>Improved completion and variable resolution for secondary PSI contexts with dedicated coverage in <code>Jinja2CompletionContributorSecondaryPsiTest</code></li>
+                <li>Added <code>SecondaryJinjaHostViewProviderFactory</code> and <code>SecondaryJinjaHostViewProvider</code> for stable PlainText/Jinja2 handling in secondary PSI scenarios</li>
+                <li>Enhanced <code>Jinja2VariableAccessPath</code> with position-aware chain-end resolution via <code>tryResolveAtChainEndFromPsi</code> for expressions like <code>obj[key]</code></li>
+                <li>Introduced <code>Jinja2ConstantExpressionEvaluator</code> to statically evaluate string keys through <code>{% set %}</code> assignment chains for subscript-based completion and schema resolution</li>
+            </ul>
+
+            <h3>🔍 Inspections</h3>
+            <ul>
+                <li>Extended <code>Jinja2UndefinedAttributeInspection</code> to resolve variable-based subscript keys (for example <code>obj[var_key]</code>) with safe fallback for dynamic/unresolved cases</li>
+                <li>Added <code>Jinja2InvalidAssignmentTargetInspection</code> for <code>{% set %}</code> targets: validates namespace attribute assignments and reports invalid subscript assignments</li>
+            </ul>
+
+            <h3>⚙️ Parser &amp; Extensions</h3>
+            <ul>
+                <li>Fixed nested custom inline tags to consistently produce <code>Jinja2StatementPsi</code> in block bodies by wrapping single-block statements in <code>STATEMENT_BLOCK</code> where required</li>
+                <li>Improved custom extension parsing in <code>ExtensionRegistry</code> to avoid eager consumption of unknown tokens while preserving built-in and assignment-tag behavior</li>
+                <li>Added built-in extension detection via <code>isKnownBuiltInExtension()</code> in <code>Jinja2EnvironmentConfigRegistry</code></li>
+            </ul>
+
+            <h3>🔗 Navigation &amp; Find Usages</h3>
+            <ul>
+                <li>Enhanced <code>Jinja2FindUsagesProvider#getNodeText</code> for <code>useFullName=true</code>: returns normalized statement context and truncates long entries for better readability</li>
+                <li>Added <code>Jinja2FindUsagesProviderWordsScannerTest</code> to verify token classification for identifiers, comments, and string literals</li>
+                <li>Moved direct macro call reference ownership to <code>Jinja2CallExpressionPsi#getReference()</code> and refined callee targeting with explicit <code>TextRange</code> in <code>Jinja2MacroReference</code></li>
+            </ul>
+
+            <h3>🧭 Structure View &amp; Icons</h3>
+            <ul>
+                <li>Completed and activated Jinja2 Structure View: implemented proper child collection and leaf/expand behavior in the model</li>
+                <li>Added dedicated block and macro icons (<code>jinja2_block*</code>, <code>jinja2_macro*</code>) and integrated them into <code>Jinja2Icons</code></li>
+            </ul>
+
+            <h3>🧪 Tests, Examples &amp; Docs</h3>
+            <ul>
+                <li>Added broad regression coverage for secondary PSI completion, variable-key subscript resolution, custom extension parsing, custom inline tags, macro call references, structure view, icons, and Find Usages words scanning</li>
+                <li>Added/updated supporting plans and runnable examples under <code>docs/plans</code> and <code>docs/examples</code> for each change area</li>
+            </ul>
+
+            <h3>🧹 Refactoring &amp; Cleanup</h3>
+            <ul>
+                <li>Removed dead/commented-out legacy code and unused imports in formatting, element factory, sentry reporting, and obsolete view-provider artifacts</li>
+                <li>Refactored spacing builder initialization to use <code>Jinja2Language.INSTANCE</code> directly instead of dynamic language lookup</li>
+            </ul>
+
             <h2>Version 2.3.0</h2>
             <p><strong>Assignment Tags, Type System &amp; Navigation Enhancements</strong></p>
 
