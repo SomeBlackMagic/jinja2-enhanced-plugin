@@ -1,5 +1,6 @@
+{% set inventory = {'node-1': {'network': {'ip': {'db': '10.0.0.7'}}}} %}
+{% set host_key = "node-1" %}
+{% set instance_key = "db1" %}
 
-{% set foo={"bar": {}} %}
-{{ foo.bar.baz }}
-{{ foo["bar"]["baz"] }}
-{{ foo[""] }}
+{{ inventory[host_key]["network"]["ip"][instance_key] }}
+{{ inventory[host_key]["missing"] }}
