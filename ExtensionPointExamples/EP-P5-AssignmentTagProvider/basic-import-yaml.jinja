@@ -1,0 +1,7 @@
+{# Register a generic assignmentTagProvider for `import_yaml` before testing this file. #}
+{# Configure either static fields or resolveType(...) to expose `host` and `port`. #}
+{% import_yaml 'defaults-flat.yml' as imported_yaml %}
+
+{{ imported_yaml }}
+{{ imported_yaml.host }}
+{{ imported_yaml.port }}
