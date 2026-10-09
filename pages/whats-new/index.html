@@ -84,6 +84,61 @@
     </div>
 
     <!-- ===================== -->
+    <!-- VERSION 2026.3.1 -->
+    <!-- ===================== -->
+    <section class="version" data-version="2026.3.1">
+        <h2>Version 2026.3.1</h2>
+        <p><strong>Framework-aware template assistance, richer type information, and more extension points for Jinja2
+            integrations.</strong></p>
+
+        <h3>Smarter Template Assistance</h3>
+        <ul>
+            <li>Completion, inspections, navigation, and Quick Documentation now understand types supplied by
+                frameworks, including nested attributes, mappings, collections, unions, and callable values.
+            </li>
+            <li>Variables contributed by a framework now participate in completion, type inference, navigation, and
+                shadowing just like template-local variables.
+            </li>
+            <li>Dynamic object members can provide completion, validation, documentation, and navigation. Members
+                without a physical declaration can still open a virtual declaration in the IDE.
+            </li>
+            <li>Improved diagnostics for unknown attributes and method calls when type information is available from an
+                integration.
+            </li>
+            <li>Added validation support for attributes of Jinja's <code>loop</code> object.</li>
+        </ul>
+
+        <h3>Framework &amp; Extension API</h3>
+        <ul>
+            <li>New APIs let framework integrations contribute variables, functions, macros, indexed symbols, reference
+                resolution, completion items, dynamic types, type schemas, inspection rules, and quick fixes.
+            </li>
+            <li>Contributed functions and macros now offer signatures, documentation, completion, navigation, and Find
+                Usages support.
+            </li>
+            <li>Added file-aware Jinja environment configuration, allowing integrations to customize delimiters and
+                syntax settings for individual template files.
+            </li>
+            <li>Language injection rules can now target precise ranges inside a host element.</li>
+            <li>Live templates can be limited to the appropriate native or framework-provided Jinja template contexts.
+            </li>
+            <li>Examples and API documentation are available for the new extension points, making it easier to build and
+                test framework integrations.
+            </li>
+        </ul>
+
+        <h3>Fixes &amp; Reliability</h3>
+        <ul>
+            <li>Improved reliability of IDE analysis for templates and injected fragments, including safer handling of
+                background processing.
+            </li>
+            <li>Improved cache invalidation so changes from framework integrations are reflected more consistently in
+                editor assistance.
+            </li>
+            <li>Improved compatibility with code shrinking in packaged plugin builds.</li>
+        </ul>
+    </section>
+    <!-- ===================== -->
     <!-- VERSION 2026.3.0 -->
     <!-- ===================== -->
     <section class="version" data-version="2026.3.0">
@@ -154,11 +209,14 @@
     <!-- ===================== -->
     <section class="version" data-version="2026.2.0">
         <h2>Version 2026.2.0</h2>
-        <p><strong>Improved in-IDE documentation experience and compatibility with the latest IntelliJ-based IDEs.</strong></p>
+        <p><strong>Improved in-IDE documentation experience and compatibility with the latest IntelliJ-based
+            IDEs.</strong></p>
 
         <h3>In-IDE Documentation</h3>
         <ul>
-            <li>Plugin documentation now opens in an editor tab, making it easier to read and keep alongside your code.</li>
+            <li>Plugin documentation now opens in an editor tab, making it easier to read and keep alongside your
+                code.
+            </li>
             <li>Documentation pages use the IDE's embedded browser for richer and more reliable rendering.</li>
         </ul>
 
@@ -169,7 +227,9 @@
 
         <h3>Improvements</h3>
         <ul>
-            <li>Reduced unnecessary Jinja2 detection notifications for files that are already recognized as Jinja2 templates.</li>
+            <li>Reduced unnecessary Jinja2 detection notifications for files that are already recognized as Jinja2
+                templates.
+            </li>
         </ul>
     </section>
 
@@ -454,20 +514,20 @@
                 if (v.startsWith(prefix)) {
                     const p = parseInt(v.substring(prefix.length));
                     if (!isNaN(p) && p <= patch) {
-                        matching.push({ block, patch: p });
+                        matching.push({block, patch: p});
                     }
                 }
             });
 
             // sort descending by patch and show
             matching.sort((a, b) => b.patch - a.patch);
-            matching.forEach(({ block }) => {
+            matching.forEach(({block}) => {
                 block.style.display = 'block';
                 shown = true;
             });
 
             if (matching.length > 0) {
-                matching[0].block.scrollIntoView({ block: 'start' });
+                matching[0].block.scrollIntoView({block: 'start'});
             }
         } else {
             // exact match for non-semver versions (e.g. "latest")

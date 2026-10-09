@@ -17,15 +17,21 @@ ExtensionPointExamples/
 ├── EP-P1-VariableProvider/
 ├── EP-P1-TemplateRootProvider-smoke/
 ├── EP-P2-DocumentationProvider/
+├── EP-P2-CompletionContributor/
 ├── EP-P2-EnvironmentConfigProvider/
 ├── EP-P2-InspectionRuleProvider/
+├── EP-P2-QuickFixProvider/
+├── EP-P2-ReferenceResolver/
 ├── EP-P2-TagBehaviorProvider/
 ├── EP-P3-InjectionLanguageProvider/
+├── EP-P3-ApiConfigProvider/
 ├── EP-P3-MacroModuleProvider/
 ├── EP-P3-ScopeVariableProvider/
 ├── EP-P4-DelimiterProvider/
+├── EP-P4-DynamicTypeProvider/
 ├── EP-P4-LiveTemplateContextProvider/
 ├── EP-P5-AssignmentTagProvider/
+├── EP-P5-SymbolIndexContributor/
 ├── EP-P6-AssignmentTagProvider-FindUsages/
 ├── EP-P6-AssignmentTagProvider-GotoDefinition/
 └── EP-P7-AssignmentTagProvider-Highlighting/
@@ -61,7 +67,9 @@ Key files:
 ### FunctionProvider
 **Directory:** `EP-P1-FunctionProvider/`
 
-Exposes globally callable functions (`url_for`, `get_flashed_messages`, `csrf_token`) with parameter signatures and return types.
+Exposes globally callable functions (`url_for`, `get_flashed_messages`, `csrf_token`) with
+positional/keyword/`**kwargs` signatures, return types, rich documentation, and optional
+navigation targets.
 
 Key files:
 - `SampleFunctionProvider.java` — implements `Jinja2FunctionProvider`
@@ -112,6 +120,22 @@ Key files:
 
 ## P2 — Configuration & Inspections
 
+### CompletionContributor
+**Directory:** `EP-P2-CompletionContributor/`
+
+Adds context-specific lookup variants while preserving the built-in completion pipeline.
+
+### QuickFixProvider
+**Directory:** `EP-P2-QuickFixProvider/`
+
+Appends safe framework quick fixes to an existing Jinja inspection diagnostic.
+
+### ReferenceResolver
+**Directory:** `EP-P2-ReferenceResolver/`
+
+Resolves framework-backed variables, attributes, calls, or template paths through the common
+poly-variant reference pipeline.
+
 ### DocumentationProvider
 **Directory:** `EP-P2-DocumentationProvider/`
 
@@ -124,6 +148,7 @@ Key files:
 **Directory:** `EP-P2-EnvironmentConfigProvider/`
 
 Configures Jinja2 environment flags (`loopcontrols`, `i18n`, `strict_undefined`) on a per-project or per-directory basis.
+This is a legacy smoke scenario; new integrations should use the canonical `apiConfigProvider` EP.
 
 Key files:
 - `templates/strict_undefined.jinja2` — undefined variable usage
@@ -151,6 +176,11 @@ Key files:
 ---
 
 ## P3 — Advanced Features
+
+### ApiConfigProvider
+**Directory:** `EP-P3-ApiConfigProvider/`
+
+Provides project- and file-aware environment configuration, including extensions and delimiters.
 
 ### InjectionLanguageProvider
 **Directory:** `EP-P3-InjectionLanguageProvider/`
@@ -183,6 +213,11 @@ Key files:
 ---
 
 ## P4 — Advanced Configuration
+
+### DynamicTypeProvider
+**Directory:** `EP-P4-DynamicTypeProvider/`
+
+Contributes metadata-backed members and callable types for a specific expression access chain.
 
 ### DelimiterProvider
 **Directory:** `EP-P4-DelimiterProvider/`
@@ -219,6 +254,11 @@ Key files:
 - `basic-import-yaml.jinja` — flat schema (`host`, `port`)
 - `nested-import-yaml.jinja` — nested schema (`mysql.host`, `redis.host`)
 - `defaults-flat.yml` / `defaults-nested.yml` — backing YAML files
+
+### P5 — SymbolIndexContributor
+**Directory:** `EP-P5-SymbolIndexContributor/`
+
+Adds public framework exports to the unified macro/block symbol index for import completion and resolution.
 
 ### P6 — FindUsages
 **Directory:** `EP-P6-AssignmentTagProvider-FindUsages/`
